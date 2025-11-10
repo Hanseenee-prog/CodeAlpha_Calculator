@@ -2,6 +2,7 @@ import './App.css'
 import { useState } from "react";
 import Header from './components/Header';
 import SideBar from './components/SideBar';
+import CalcInput from './components/CalcInput';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,7 @@ function App() {
         <SideBar 
           isOpen={isOpen}
         />
+        <CalcInput />
       </div>
     </div>
   )

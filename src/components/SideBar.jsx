@@ -15,6 +15,7 @@ const SideBar = ({isOpen}) => {
                             className="m-2 p-3 border-black border-2 rounded-2xl
                                     hover:bg-emerald-700"
                         >
+                            {/* If mode is Converter, add dropdown arrow */}
                             {mode !== 'Converter' ? mode : (
                                 <span className="w-full flex justify-between">
                                     {mode}
