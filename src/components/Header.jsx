@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-const Header = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
+const Header = ({isOpen, setIsOpen}) => {
     // Function to open sidebar
     function openSidebar() {
         isOpen ? setIsOpen(false) : setIsOpen(true);
@@ -13,10 +9,10 @@ const Header = () => {
 
         {/* Calc Header content */}
         <div className="calc-header-content bg-amber-500 w-full flex justify-center relative p-3">
-          <span className="hamburger-menu bg-blue-400 absolute left-3"
+          <span className="hamburger-menu bg-blue-400 absolute left-3 cursor-pointer z-50"
                 onClick={openSidebar}
           >
-            {isOpen ? (
+            {!isOpen ? (
                 // Hamburger Icon
                 <svg xmlns='http://www.w3.org/200/svg' 
                     fill='none' 
