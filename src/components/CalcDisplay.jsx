@@ -11,6 +11,9 @@ const CalcDisplay = ({ display }) => {
                         bottom-0 right-0 w-full float-right">
                             {display}
                 </span>
+
+                {/* Span for results display */}
+                <span>10</span>
             </div>
         </div>
     );

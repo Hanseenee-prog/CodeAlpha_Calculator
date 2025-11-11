@@ -8,8 +8,9 @@ import { standardButtons } from './data/buttons';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [buttons, setButtons] = useState(standardButtons);
+  const [buttons, setButtons] = useState(standardButtons.map(button => button.label));
   const [display, setDisplay] = useState(0);
+  const [mode, setMode] = useState('Standard');
 
   return (
     <div className='w-[90vw] h-[90vw] max-w-3xl md:h-[80vh] 
@@ -25,6 +26,7 @@ function App() {
           isOpen={isOpen}
           setButtons={setButtons}
           setIsOpen={setIsOpen}
+          setMode={setMode}
         />
         <CalcDisplay 
           display={display}
@@ -33,6 +35,7 @@ function App() {
         < KeyPadGrid 
           buttons={buttons}
           setDisplay={setDisplay}
+          mode={mode}
         />
       </div>
     </div>
