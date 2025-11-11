@@ -1,4 +1,4 @@
-const CalcDisplay = ({ display }) => {
+const CalcDisplay = ({ expression, result }) => {
     return ( 
         <div className="">
             <div 
@@ -9,11 +9,11 @@ const CalcDisplay = ({ display }) => {
                 <span 
                     className="relative font-semibold text-6xl
                         bottom-0 right-0 w-full float-right">
-                            {display}
+                            {expression}
                 </span>
 
                 {/* Span for results display */}
-                <span>10</span>
+                <span>{result}</span>
             </div>
         </div>
     );

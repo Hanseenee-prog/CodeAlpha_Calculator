@@ -9,7 +9,7 @@ import { useCalcLogic } from './utils.js/useCalcLogic';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [buttons, setButtons] = useState(standardButtons.map(button => button.label));
+  const [buttons, setButtons] = useState(standardButtons);
   const { expression, result, onButtonClick, clear } = useCalcLogic();
   const [mode, setMode] = useState('Standard');
 
