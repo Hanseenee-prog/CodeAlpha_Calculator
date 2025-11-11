@@ -1,28 +1,5 @@
-import { standardButtons, scientificButtons, programmerButtons } from "../data/buttons";
-
-const SideBar = ({isOpen, setButtons, setIsOpen, setMode}) => {
+const SideBar = ({isOpen, setIsOpen, onModeChange }) => {
     const modes = ['Standard', 'Scientific', 'Programmer', 'Converter'];
-    
-    // Send Array to KeyPadGrid
-    function sendButtonsArray(mode) {
-        switch (mode) {
-            case 'Standard':
-                setButtons(standardButtons.map(button => button.label))
-                break;
-        
-            case 'Scientific':
-                setButtons(scientificButtons.map(button => button.label))
-                break;
-
-            case 'Programmer':
-                setButtons(programmerButtons.map(button => button.label))
-                break;
-
-            default:
-                setButtons(standardButtons.map(button => button.label))
-                break;
-        }
-    }
 
     return (
         <div className={`
@@ -38,9 +15,8 @@ const SideBar = ({isOpen, setButtons, setIsOpen, setMode}) => {
                             className="m-2 p-3 border-black border-2 rounded-2xl
                                     hover:bg-emerald-700"
                             onClick={() => {
-                                sendButtonsArray(mode)
                                 setIsOpen(false)
-                                setMode(mode)
+                                onModeChange(mode)
                             }}
                         >
                             {/* If mode is Converter, add dropdown arrow */}

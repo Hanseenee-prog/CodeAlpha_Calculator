@@ -4,13 +4,25 @@ import Header from './components/Header';
 import SideBar from './components/SideBar';
 import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/KeyPadGrid';
-import { standardButtons } from './data/buttons';
+import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
+import { useCalcLogic } from './utils.js/useCalcLogic';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [buttons, setButtons] = useState(standardButtons.map(button => button.label));
-  const [display, setDisplay] = useState(0);
+  const { expression, result, onButtonClick, clear } = useCalcLogic();
   const [mode, setMode] = useState('Standard');
+
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    switch (newMode) {
+      case 'Standard': setButtons(standardButtons); break;
+      case 'Scientific': setButtons(scientificButtons); break;
+      case 'Programmer': setButtons(programmerButtons); break;
+      default: setButtons(standardButtons);
+    }
+    clear();
+  };
 
   return (
     <div className='w-[90vw] h-[90vw] max-w-3xl md:h-[80vh] 
@@ -22,19 +34,21 @@ function App() {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
+
         <SideBar 
           isOpen={isOpen}
-          setButtons={setButtons}
           setIsOpen={setIsOpen}
-          setMode={setMode}
+          onModeChange={handleModeChange}
         />
+
         <CalcDisplay 
-          display={display}
-          setDisplay={setDisplay}
+          expression={expression}
+          result={result}
         />
+
         < KeyPadGrid 
           buttons={buttons}
-          setDisplay={setDisplay}
+          onButtonClick={onButtonClick}
           mode={mode}
         />
       </div>

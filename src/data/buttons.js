@@ -8,7 +8,7 @@ export const standardButtons = [
 
   // Row 2 - Clear and special functions 
   { label: 'C', type: 'clear', style: 'clear' }, 
-  { label: 'CE', type: 'clear-entry', style: 'clear' }, 
+  { label: 'DEL', type: 'clear-entry', style: 'clear' }, 
   { label: '←', type: 'backspace', style: 'function' }, 
   { label: '±', type: 'negate', style: 'function' }, 
   { label: '√', type: 'sqrt', style: 'function' }, 
@@ -139,7 +139,7 @@ export const programmerButtons = [
   { label: 'D', value: 'D', type: 'hex', style: 'hex' }, 
   { label: 'E', value: 'E', type: 'hex', style: 'hex' }, 
   { label: 'F', value: 'F', type: 'hex', style: 'hex' }, 
-  { label: 'CE', type: 'clear-entry', style: 'clear' }, 
+  { label: 'DEL', type: 'clear-entry', style: 'clear' }, 
   { label: 'C', type: 'clear', style: 'clear' }, 
           
   // Row 6 
