@@ -1,10 +1,17 @@
-const CalcDisplay = () => {
+const CalcDisplay = ({ display }) => {
     return ( 
         <div className="">
             <div 
-                id="calcInput"
-                className="h-20 border-[3px] w-full rounded-2xl" 
-            />
+                id="calcDisplay"
+                className="h-40 border-[3px] w-full rounded-2xl" 
+            >
+                {/* Span for calculations display */}
+                <span 
+                    className="relative font-semibold text-6xl
+                        bottom-0 right-0 w-full float-right">
+                            {display}
+                </span>
+            </div>
         </div>
     );
 }

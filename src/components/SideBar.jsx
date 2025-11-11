@@ -26,7 +26,7 @@ const SideBar = ({isOpen, setButtons, setIsOpen}) => {
 
     return (
         <div className={`
-            side-bar absolute bg-emerald-900 top-0 
+            side-bar absolute bg-emerald-900 top-0 left-0
             opacity-100 h-full z-30 rounded-2xl 
             transition-all duration-300 overflow-hidden 
             ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
