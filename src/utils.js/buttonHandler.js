@@ -67,6 +67,13 @@ export const handleButtonClick = (button, state, actions) => {
             setExpression(expression === '0' ? 'Ans' : expression + 'Ans');
             break;
 
+        // case 'DEL': {
+        //     let expressionString = expression.toString().split('').splice(0, -1).join();
+        //     console.log(expressionString);
+        //     setExpression(expressionString)
+        //     break;
+        // }
+
         case 'clear':
             setExpression('0');
             setResult('0');
