@@ -32,12 +32,12 @@ export const standardButtons = [
   { label: '2', value: '2', type: 'number', style: 'number' }, 
   { label: '3', value: '3', type: 'number', style: 'number' }, 
   { label: '-', value: '-', type: 'operator', style: 'operator'}, 
-  { label: '=', type: 'equals', style: 'equals' }, 
+  { label: '+', value: '+', type: 'operator', style: 'operator' },
   
   // Row 6 
   { label: '0', value: '0', type: 'number', style: 'number', span: 'col-span-2' }, 
   { label: '.', value: '.', type: 'decimal', style: 'number' }, 
-  { label: '+', value: '+', type: 'operator', style: 'operator' }, 
+  { label: 'Ans', type: 'answer', style: 'answer' }, 
   { label: '=', type: 'equals', style: 'equals' }, 
 ]; 
 
