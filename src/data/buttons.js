@@ -9,7 +9,8 @@ export const standardButtons = [
   // Row 2 - Clear and special functions 
   { label: 'C', type: 'clear', style: 'clear' }, 
   { label: 'DEL', type: 'DEL', style: 'clear' }, 
-  { label: '←', type: 'backspace', style: 'function' }, 
+  { label: '←', type: 'move_left', style: 'function' }, 
+  { label: '→', type: 'move_right', style: 'function' }, 
   { label: '±', type: 'negate', style: 'function' }, 
   { label: '√', type: 'sqrt', style: 'function' }, 
   

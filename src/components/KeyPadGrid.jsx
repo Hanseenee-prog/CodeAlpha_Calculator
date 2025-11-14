@@ -1,7 +1,7 @@
 const KeyPadGrid = ({ buttons, onButtonClick }) => {
     return (
-        <div className="border-2 border-red-400 h-full">
-            <div className="grid grid-cols-5 gap-2 bg-amber-600 place-items-center h-full">
+        <div className="h-full">
+            <div className="grid grid-cols-5 gap-2 place-items-center h-full">
                 {
                     buttons.map((button, index) => {
                         return <span key={index}

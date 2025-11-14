@@ -10,7 +10,7 @@ import { useCalcLogic } from './utils.js/useCalcLogic';
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [buttons, setButtons] = useState(standardButtons);
-  const { expression, result, onButtonClick, clear } = useCalcLogic();
+  const { expression, result, onButtonClick, clear, cursorPosition } = useCalcLogic();
   const [mode, setMode] = useState('Standard');
 
   const handleModeChange = (newMode) => {
@@ -44,6 +44,7 @@ function App() {
         <CalcDisplay 
           expression={expression}
           result={result}
+          cursorPosition={cursorPosition}
         />
 
         < KeyPadGrid 
