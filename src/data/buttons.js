@@ -38,7 +38,7 @@ export const standardButtons = [
   // Row 6 
   { label: '0', value: '0', type: 'number', style: 'number', span: 'col-span-2' }, 
   { label: '.', value: '.', type: 'decimal', style: 'number' }, 
-  { label: 'Ans', type: 'answer', style: 'answer' }, 
+  { label: 'Ans', value: 'Ans', type: 'answer', style: 'answer' }, 
   { label: '=', type: 'equals', style: 'equals' }, 
 ]; 
 

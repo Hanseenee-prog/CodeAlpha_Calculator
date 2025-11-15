@@ -12,15 +12,16 @@ export const useCalcLogic = () => {
 
     // Function to update expression respecting the cursor position
     const updateExpressionAtCursor = useCallback((newText) => {
-        if (isResultDisplayed) {
-            setExpression(newText);
-            setCursorPosition(newText.length);
+        // If an operator is clicked after the result is display, let the expression be Ans{then new operator}
+        if (/[+\-*/\x]/.test(newText) && isResultDisplayed) {
+            setExpression('Ans' + newText);
+            setCursorPosition(4);
             setIsResultDisplayed(false);
             return;
-        }
-
+        } 
+        
         // Handle initial '0' replacement
-        if (expression === '0' || expression === 0) {
+        if ((expression === '0' || expression === 0) && newText !== '.') {
             setExpression(newText);
             setCursorPosition(newText.length);
             return;
@@ -28,9 +29,26 @@ export const useCalcLogic = () => {
 
         if (newText === '.') {
             const parts = expression.slice(0, cursorPosition).split(/[+\-*/\x]/);
-            const lastNumber  = parts[parts.length - 1];
+            const lastNumber = parts[parts.length - 1];
 
-            if (!lastNumber.includes('.')) return;
+            if (!lastNumber.includes('.')) {
+                // If the current expression is 0, replace it with 0.
+                if (expression === '0' || expression === 0) {
+                    setExpression('0.');
+                } else {
+                    setExpression(expression + '.');
+                }
+            };
+
+            setCursorPosition(newText.length + cursorPosition);
+            return;
+        }
+
+        if (isResultDisplayed) {
+            setExpression(newText);
+            setCursorPosition(newText.length);
+            setIsResultDisplayed(false);
+            return;
         }
 
         setExpression(prevExpr => {
@@ -39,7 +57,6 @@ export const useCalcLogic = () => {
                     newText +
                     prevExpr.slice(cursorPosition);
 
-            console.log(newExpr);
             setCursorPosition(newText.length + cursorPosition);
             return newExpr;
         })
@@ -60,11 +77,20 @@ export const useCalcLogic = () => {
         setExpression(prevExpr => {
             if (cursorPosition > 0) {
                 const newExpr = prevExpr.slice(0, cursorPosition - 1) + prevExpr.slice(cursorPosition);
-                setCursorPosition(cursorPosition - 1);
-                return newExpr; 
+                
+                // If the display is empty replace it with 0
+                if (newExpr === '') {
+                    setCursorPosition(1);
+                    return '0';
+                } else {
+                    setCursorPosition(cursorPosition - 1);
+                    return newExpr;
+                }
             }
             return prevExpr;
         })
+
+        setIsResultDisplayed(false);
     }, [cursorPosition]);
 
     const onButtonClick = (button) => {

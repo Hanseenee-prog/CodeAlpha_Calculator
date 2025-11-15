@@ -38,8 +38,6 @@ export const handleButtonClick = (button, state, actions) => {
                 setLastAns(calculatedResult);
                 setIsResultDisplayed(true);
                 setCursorPosition(calculatedResult.toString().length);
-
-                isResultDisplayed = true;
             } catch (error) {
                 setResult('Error', error);
                 setIsResultDisplayed(true);
