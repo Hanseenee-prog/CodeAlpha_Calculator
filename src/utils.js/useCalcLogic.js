@@ -40,6 +40,7 @@ export const useCalcLogic = () => {
                 }
             };
 
+            setIsResultDisplayed(false);
             setCursorPosition(newText.length + cursorPosition);
             return;
         }
