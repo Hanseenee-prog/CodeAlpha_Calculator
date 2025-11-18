@@ -4,46 +4,66 @@ const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) 
     let newExpr = expression;
     let newCursorPos = cursorPosition;
     let updatedIsResultDisplayed = isResultDisplayed;
-    
+
     // If an operator is clicked after the result is displayed, let the expression be Ans{then new operator}
     if (/[+\-*/\x]/.test(newText) && isResultDisplayed) {
-        expression = `Ans${newText}`;
-        cursorPosition = 4;
-        isResultDisplayed = false;
+        newExpr = `Ans${newText}`;
+        newCursorPos = newExpr.length;
+        updatedIsResultDisplayed = false;
         console.log('for operator')
+        return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
     }
     
-    // Handle initial '0' replacement
-    if ((expression === '0' || expression === 0) && newText !== '.') {
-        expression = newText.toString();
-        cursorPosition = newText.length;
-        isResultDisplayed = false;
-        console.log('for number')
+    // If result is displayed and user types anything else, replace expression
+    if (isResultDisplayed && !/[+\-*/\x]/.test(newText)) {
+        if (newText === '.') {
+            newExpr = '0.'
+        }
+        else {
+            newExpr = newText;
+        }
+
+        newCursorPos = newText.length;
+        updatedIsResultDisplayed = false;
+        return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
     }
 
-    // Condition for decimal behaviour
+    // Handle initial '0' replacement
+    if ((newExpr === '0' || newExpr === 0) && newText !== '.') {
+        newExpr = newText;
+        newCursorPos = newText.length;
+        updatedIsResultDisplayed = false;
+        return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
+    }
+
+    // Handle decimal - check if current number already has one
     if (newText === '.') {
-        const parts = expression.slice(0, cursorPosition).split(/[+\-*/\x]/);
+        const beforeCursor = newExpr.slice(0, cursorPosition);
+        const parts = beforeCursor.split(/[+\-*/\x]/);
         const lastNumber = parts[parts.length - 1];
 
-        if (!lastNumber.includes('.')) {
-            // If the current expression is 0, replace it with 0.
-            if (expression === '0' || expression === 0) {
-                expression = '0.';
-            }
+        if (lastNumber.includes('.')) {
+            // Already has decimal, don't add
+            return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
         };
 
-        console.log('for decimal')
-        isResultDisplayed = false;
+        // Handle '0' to '0.'
+        if (newExpr === '0' || newExpr === '') {
+            newExpr = '0.';
+            newCursorPos = 2;
+            return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
+        }
     }
 
-    const newExpr = 
-        expression.slice(0, cursorPosition) +
+    // Normal insertion at cursor position
+    newExpr = 
+        newExpr.slice(0, cursorPosition) +
         newText +
-        expression.slice(cursorPosition)
+        newExpr.slice(cursorPosition)
 
-    const newCursorPos = cursorPosition + newText.length;
-    return { newExpr, newCursorPos, isResultDisplayed }
+    newCursorPos = cursorPosition + newText.length;
+
+    return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
 }
 
 export const handleCalculationAction = (actionType, expression, isResultDisplayed, lastAns, cursorPosition, value) => {
