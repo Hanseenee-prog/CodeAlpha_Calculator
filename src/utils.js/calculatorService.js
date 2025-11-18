@@ -18,12 +18,13 @@ const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) 
     if (isResultDisplayed && !/[+\-*/\x]/.test(newText)) {
         if (newText === '.') {
             newExpr = '0.'
+            newCursorPos = 2;
         }
         else {
+            newCursorPos = newText.length;
             newExpr = newText;
         }
 
-        newCursorPos = newText.length;
         updatedIsResultDisplayed = false;
         return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
     }
