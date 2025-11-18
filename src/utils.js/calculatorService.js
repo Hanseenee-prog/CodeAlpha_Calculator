@@ -21,8 +21,8 @@ const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) 
             newCursorPos = 2;
         }
         else {
-            newCursorPos = newText.length;
             newExpr = newText;
+            newCursorPos = newText.length;
         }
 
         updatedIsResultDisplayed = false;
