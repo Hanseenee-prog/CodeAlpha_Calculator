@@ -1,21 +1,21 @@
-import { evaluate } from 'mathjs';
+// import { evaluate } from 'mathjs';
 
-let isResultDisplayed = false;
+// let isResultDisplayed = false;
 
 export const handleButtonClick = (button, state, actions) => {
-    const { expression, result, lastAns } = state;
+    // const { expression, result, lastAns } = state;
     const { 
         setExpression, 
         setResult, 
-        setLastAns, 
-        setCursorPosition, 
-        updateExpressionAtCursor, 
+        // setLastAns, 
+        // setCursorPosition, 
+        // updateExpressionAtCursor, 
         moveCursor, 
-        handleDeleteAtCursor, 
+        handleAction, 
         setIsResultDisplayed
     } = actions;
 
-    const { type, value, label, func } = button;
+    const { type, value, /*label, func*/ } = button;
 
     switch (type) {
         case 'number':
@@ -24,24 +24,11 @@ export const handleButtonClick = (button, state, actions) => {
         case 'answer':
             // If expression is zero, replace it with ans
             // Else add it to the current expression
-            updateExpressionAtCursor(value);
+            handleAction('insert_text', value);
             break; 
 
         case 'equals':
-            try {
-                // Replace 'Ans' with actual value before evaluation
-                const expr = expression.replace(/Ans/g, lastAns.toString())
-                const calculatedResult = evaluate(expr);
-
-                setResult(calculatedResult);
-                setExpression(calculatedResult.toString());
-                setLastAns(calculatedResult);
-                setIsResultDisplayed(true);
-                setCursorPosition(calculatedResult.toString().length);
-            } catch (error) {
-                setResult('Error', error);
-                setIsResultDisplayed(true);
-            }
+            handleAction('calculate')
             break;
 
         case 'move_left':
@@ -53,7 +40,7 @@ export const handleButtonClick = (button, state, actions) => {
             break;
 
         case 'DEL': 
-            handleDeleteAtCursor();
+            handleAction('delete');
             break;
 
         case 'clear':
