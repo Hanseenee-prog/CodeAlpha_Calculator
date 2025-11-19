@@ -36,6 +36,10 @@ export const handleButtonClick = (button, state, actions) => {
         case 'DEL': 
             handleAction('delete');
             break;
+        
+        case 'reciprocal':
+            handleAction('reciprocal')
+            break;
 
         case 'clear':
             setExpression('0');

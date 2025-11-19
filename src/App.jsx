@@ -5,7 +5,7 @@ import SideBar from './components/SideBar';
 import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
-import { useCalcLogic } from './utils.js/useCalcLogic';
+import { useCalcLogic } from './utils/useCalcLogic';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
