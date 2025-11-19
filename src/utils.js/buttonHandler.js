@@ -1,15 +1,8 @@
-// import { evaluate } from 'mathjs';
-
-// let isResultDisplayed = false;
-
 export const handleButtonClick = (button, state, actions) => {
     // const { expression, result, lastAns } = state;
     const { 
         setExpression, 
         setResult, 
-        // setLastAns, 
-        // setCursorPosition, 
-        // updateExpressionAtCursor, 
         moveCursor, 
         handleAction, 
         setIsResultDisplayed
@@ -21,6 +14,7 @@ export const handleButtonClick = (button, state, actions) => {
         case 'number':
         case 'operator':
         case 'decimal':
+        case 'percent':
         case 'answer':
             // If expression is zero, replace it with ans
             // Else add it to the current expression

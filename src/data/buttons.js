@@ -19,7 +19,7 @@ export const standardButtons = [
   { label: '8', value: '8', type: 'number', style: 'number' }, 
   { label: '9', value: '9', type: 'number', style: 'number' }, 
   { label: '÷', value: '/', type: 'operator', style: 'operator' }, 
-  { label: '%', type: 'percent', style: 'function' }, 
+  { label: '%', value: '%', type: 'percent', style: 'function' }, 
   
   // Row 4 
   { label: '4', value: '4', type: 'number', style: 'number' }, 
