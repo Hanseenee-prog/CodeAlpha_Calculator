@@ -64,18 +64,18 @@ const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) 
         return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
     }
 
-    // Handle '0' to '0.'
-    if (checks.isDecimal && (checks.isZero || checks.isEmpty)) {
-        newExpr = `0.`;
-        newCursorPos = 2;
-        updatedIsResultDisplayed = false;
-        return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
-    }
+    if (checks.isZero) {
+        // Handle '0' to '0.'
+        if (checks.isDecimal) {
+            newExpr = '0.';
+            newCursorPos = 2;
+        } 
+        // Handle initial '0' replacement
+        else if (checks.isNumber) {
+            newExpr = newText;
+            newCursorPos = newText.length;
+        }
 
-    // Handle initial '0' replacement
-    if (checks.isZero && checks.isNumber) {
-        newExpr = newText;
-        newCursorPos = newText.length;
         updatedIsResultDisplayed = false;
         return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
     }
@@ -125,10 +125,13 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
             try {
                 // If number has percent '%' replace it with the number divided by 100
-                if (number.includes('%')) number = number.replace('%', number / 100);
+                if (number.endsWith('%')) {
+                    const numValue = parseFloat(number) / 100;
+                    number = String(numValue);
+                }
 
-                // if number is zero, show an error
-                if (expression === '0') {
+                // if number is zero or not a number, show an error
+                if (isNaN(expression) || expression === '0') {
                     result.newExpr = 'Error(Cannot divide by zero)';
                     result.newCursorPos = result.newExpr.length;
                     result.isResultDisplayed = true;
@@ -190,27 +193,37 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
         case 'calculate':
             try {
                 // Replace 'Ans' with actual value before evaluation
-                let expr = expression.replace(/Ans/g, lastAns.toString())
+                let expr = expression.replace(/Ans/g, lastAns.toString());
 
                 // Replace '√' with sqrt(text) until the next operator
                 if (expr.includes('√')) {
                     expr = expr.replace(/√([^+\-*/\x^])+/g, "sqrt($1)");
                 }
 
-                result.resultValue = evaluate(expr);
-                result.newExpr = String(result.resultValue);
-                result.lastAns = (result.resultValue);
+                let evaluatedResult = evaluate(expr).toString();
+                console.log(typeof evaluatedResult);
+
+                // Throws an error if the result is an object
+                if (typeof evaluatedResult === 'object' && 'im' in evaluatedResult && evaluatedResult.im !== 0) {
+                    throw new Error('Non-real result(Imaginary number)')
+                }
+
+                result.resultValue = evaluate(evaluatedResult);
+                result.newExpr = String(evaluatedResult);
+                result.lastAns = evaluatedResult;
                 result.newCursorPos = result.newExpr.length;
-                result.isResultDisplayed = true
+                result.isResultDisplayed = true;
 
                 return result;
-            } catch {
+            } catch (err) {
                 result.resultValue = 'Error';
-                result.isResultDisplayed = true
+                result.isResultDisplayed = true;
+                console.log('Error', err);
                 return result;
             }
 
         default:
             return result;
     }
+    
 }
