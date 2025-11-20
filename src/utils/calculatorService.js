@@ -5,7 +5,7 @@ const validateInput = (expression, cursorPosition, newText) => {
     const { currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);
     
     const checks = {
-        isNumber: /[0-9]/.test(newText),
+        isNumber: /[0-9√]/.test(newText),
         isDecimal: newText === '.',
         isPercent: newText === '%',
         isOperator: /[+\-*/\x]/.test(newText),
@@ -160,7 +160,12 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
         case 'calculate':
             try {
                 // Replace 'Ans' with actual value before evaluation
-                const expr = expression.replace(/Ans/g, lastAns.toString())
+                let expr = expression.replace(/Ans/g, lastAns.toString())
+
+                // Replace '√' with sqrt(text) until the next operator
+                if (expr.includes('√')) {
+                    expr = expr.replace(/√([^+\-*/\x^])+/g, "sqrt($1)");
+                }
 
                 result.resultValue = evaluate(expr);
                 result.newExpr = String(result.resultValue);
@@ -172,14 +177,8 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
             } catch {
                 result.resultValue = 'Error';
                 result.isResultDisplayed = true
-                console.log(result.newExpr)
-
                 return result;
             }
-
-        // case 'sqrt': {
-
-        // }
 
         default:
             return result;

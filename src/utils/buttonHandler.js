@@ -15,6 +15,7 @@ export const handleButtonClick = (button, state, actions) => {
         case 'operator':
         case 'decimal':
         case 'percent':
+        case 'sqrt':
         case 'answer':
             // If expression is zero, replace it with ans
             // Else add it to the current expression
