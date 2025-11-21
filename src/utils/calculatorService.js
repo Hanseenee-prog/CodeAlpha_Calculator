@@ -1,12 +1,7 @@
 import { evaluate } from 'mathjs';
 import { getCurrentNumberAfterCursor } from './getCurrentNumberAfterCursor';
 
-/**
- * Formats a numerical result, applying rounding or scientific notation (e)
- * for very large or very small numbers.
- * @param {number} resultValue - The raw number result from evaluation.
- * @returns {string} The formatted result string.
- */
+// Formats a result, responsible for rounding up or down
 const formatResult = (resultValue) => {
     // Define the boundaries for switching to scientific notation
     const EXPONENTIAL_THRESHOLD = 1e12; // Numbers larger than 1 trillion
@@ -20,13 +15,13 @@ const formatResult = (resultValue) => {
     
     const absValue = Math.abs(resultValue);
 
-    // 1. Check for Scientific Notation (Exponential)
+    // Check for Scientific Notation (Exponential)
     if (absValue >= EXPONENTIAL_THRESHOLD || (absValue < DECIMAL_THRESHOLD && absValue !== 0)) {
         // Use toExponential(N) to show N digits after the decimal point
         return resultValue.toExponential(DECIMAL_PLACES).toString();
     } 
     
-    // 2. Standard Rounding
+    // Standard Rounding
     else {
         // Use toFixed() to round to a fixed number of decimal places.
         let rounded = resultValue.toFixed(DECIMAL_PLACES);
@@ -183,7 +178,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 
                 const numberValue = parseFloat(numberString);
 
-                // 🚨 FIX: Check current number value for zero/NaN, not the entire expression
+                // Check current number value for zero/NaN, not the entire expression
                 if (isNaN(numberValue) || numberValue === 0) {
                     result.newExpr = 'Error(Cannot divide by zero)';
                     result.newCursorPos = result.newExpr.length;
@@ -192,14 +187,14 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 }
 
                 // Get the reciprocal of the number
-                const reciprocal = String(1 / numberValue);
+                const reciprocalValue = 1 / numberValue;
 
                 // Get the other numbers before and after the current one
                 const beforeNumber = expression.slice(0, startIndex);
                 const afterNumber = expression.slice(endIndex);
 
-                newExpr = beforeNumber + reciprocal + afterNumber;
-                newCursorPos = (beforeNumber + reciprocal).length;
+                newExpr = beforeNumber + formatResult(reciprocalValue) + afterNumber;
+                newCursorPos = (beforeNumber + formatResult(reciprocalValue)).length;
             } 
             catch {
                 console.log('Error by reciprocal');
