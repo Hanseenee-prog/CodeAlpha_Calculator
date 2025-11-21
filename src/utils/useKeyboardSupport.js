@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-// import { useCalcLogic } from "./useCalcLogic"
 
 let keyBuffer = '';
 
@@ -51,13 +50,6 @@ export const useKeyboardSupport = (handleAction, moveCursor) => {
                 else value = e.key;
             }
 
-
-            // Check for key 'a' to ahow answer
-            // else if(e.key === 'a') {
-            //     actionType = 'insert_text';
-            //     value = 'Ans';
-            // }
-
             if (actionType) handleAction(actionType, value);
         }
 
@@ -69,5 +61,4 @@ export const useKeyboardSupport = (handleAction, moveCursor) => {
             document.removeEventListener('keydown', handleKeyDown);
         }
     }, [handleAction, moveCursor])
-    // handleAction('insert_text', 1);
 }
