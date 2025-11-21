@@ -23,7 +23,7 @@ export const getCurrentNumberAfterCursor = (expression, cursorPosition) => {
         endIndex++;
     }
 
-    const currentNumber = expression.slice(startIndex, endIndex).trim();
+    const currentNumber = expr.slice(startIndex, endIndex).trim();
 
     return { startIndex, endIndex, currentNumber };
 }

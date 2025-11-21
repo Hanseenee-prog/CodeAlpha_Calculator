@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { handleButtonClick } from './buttonHandler';
 import { handleCalculationAction } from "./calculatorService";
+import { useKeyboardSupport } from "./useKeyboardSupport";
 
 export const useCalcLogic = () => {
     const [expression, setExpression] = useState('0');
@@ -30,7 +31,9 @@ export const useCalcLogic = () => {
         setResult(updates.resultValue);
         setIsResultDisplayed(updates.isResultDisplayed);
         
-    }, [cursorPosition, isResultDisplayed, expression, lastAns])
+    }, [cursorPosition, isResultDisplayed, expression, lastAns]);
+
+    useKeyboardSupport(handleAction, moveCursor);
 
     const onButtonClick = (button) => {
         const state = { expression, result, lastAns };

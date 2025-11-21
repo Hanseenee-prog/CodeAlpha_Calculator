@@ -13,6 +13,7 @@ function App() {
   const { expression, result, onButtonClick, clear, cursorPosition } = useCalcLogic();
   const [mode, setMode] = useState('Standard');
 
+  // Handle mode change - like scientific, standard, etc
   const handleModeChange = (newMode) => {
     setMode(newMode);
     switch (newMode) {

@@ -221,6 +221,12 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 console.log('Error', err);
                 return result;
             }
+        
+        case 'clear':
+            result.newExpr ='0';
+            result.resultValue = '0';
+            result.isResultDisplayed = false;
+            return result;
 
         default:
             return result;

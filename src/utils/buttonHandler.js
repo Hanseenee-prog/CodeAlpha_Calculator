@@ -1,11 +1,8 @@
 export const handleButtonClick = (button, state, actions) => {
     // const { expression, result, lastAns } = state;
     const { 
-        setExpression, 
-        setResult, 
         moveCursor, 
         handleAction, 
-        setIsResultDisplayed
     } = actions;
 
     const { type, value, /*label, func*/ } = button;
@@ -47,9 +44,7 @@ export const handleButtonClick = (button, state, actions) => {
             break;
 
         case 'clear':
-            setExpression('0');
-            setResult('0');
-            setIsResultDisplayed(false);
+            handleAction('clear');
             break;
 
         default:
