@@ -11,7 +11,6 @@ export const useKeyboardSupport = (handleAction, moveCursor) => {
 
             // Track 's' and 'q'
             if (e.key === 's' || e.key === 'q') {
-                e.preventDefault();
                 keyBuffer += e.key;
                 keyBuffer = keyBuffer.slice(-2) // Always return last two characters
 
@@ -24,20 +23,11 @@ export const useKeyboardSupport = (handleAction, moveCursor) => {
                 }
             }
 
-            // Check for number keys (0 - 9), operators, square root or decimal, etc
-            if (/[0-9.%√+\-*/\x]/.test(e.key)) {
-                actionType = 'insert_text';
-                
-                if (e.key === 'x') value = '*'; // If 'x' is pressed, input '*'
-                else if (e.key === 'a') value = 'Ans'; // If 'a' is pressed, input 'Ans'
-                else value = e.key;
-            }
-
             // Check for backspace key to delete
             else if (e.key === 'Backspace') actionType = 'delete';
             
             // Check for enter key
-            else if (e.key === 'Enter') actionType = 'calculate';
+            else if (e.key === 'Enter' || e.key === '=') actionType = 'calculate';
 
             // Check for arrow keys to move cursor
             else if (e.key === 'ArrowLeft') moveCursor('left');
@@ -51,6 +41,16 @@ export const useKeyboardSupport = (handleAction, moveCursor) => {
 
             // Check for key 'n' to negate
             else if(e.key === 'n') actionType = 'negate';
+
+            // Check for number keys (0 - 9), operators, square root or decimal, etc
+            else if (/[0-9.%√+\-*/\xa]/.test(e.key)) {
+                actionType = 'insert_text';
+                
+                if (e.key === 'x') value = '*'; // If 'x' is pressed, input '*'
+                else if (e.key === 'a') value = 'Ans'; // If 'a' is pressed, input 'Ans'
+                else value = e.key;
+            }
+
 
             // Check for key 'a' to ahow answer
             // else if(e.key === 'a') {

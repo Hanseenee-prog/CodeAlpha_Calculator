@@ -15,12 +15,24 @@ export const useCalcLogic = () => {
     // Function to move the cursor
     const moveCursor = useCallback(direction => {
         setCursorPosition(prevPosition => {
-            if (direction === 'left') return Math.max(0, prevPosition - 1); // Cursor never goes beyond 0
-            else if (direction === 'right') return Math.min(expression.length, prevPosition + 1); // Cursor never goes beyond expression's length
+            if (expression === '0') return prevPosition;
 
-            return prevPosition;
+            let newPosition = prevPosition;
+
+            if (direction === 'left') {
+                newPosition = Math.max(0, prevPosition - 1); // Cursor never goes beyond 0
+
+                if (prevPosition >= 3 && expression.substring(prevPosition - 3, prevPosition) === 'Ans') return prevPosition - 3;
+            }
+            else if (direction === 'right') {
+                newPosition = Math.min(expression.length, prevPosition + 1); // Cursor never goes beyond expression's length
+            
+                if (expression.substring(prevPosition, prevPosition + 3) === 'Ans') return prevPosition + 3;
+            }
+
+            return newPosition;
         })
-    }, [expression.length]);
+    }, [expression]);
 
     const handleAction = useCallback((actionType, value) => {
         const updates = handleCalculationAction(actionType, expression, isResultDisplayed, lastAns, cursorPosition, value);

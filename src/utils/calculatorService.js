@@ -107,13 +107,26 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
         }
         
         case 'delete':
+            if (expression === '0') return result;
+
             if (cursorPosition > 0) {
-                const newExpr = expression.slice(0, cursorPosition - 1) + expression.slice(cursorPosition);
-                
-                // If the display is empty replace it with 0
-                result.newExpr = (newExpr === '' ? '0' : newExpr);
-                result.newCursorPos = cursorPosition - 1;
-                console.log(result.newExpr)
+                let newExpr = expression.slice(0, cursorPosition - 1) + expression.slice(cursorPosition);
+                let newCursorPos = cursorPosition - 1;
+
+                // Handle deletion of 'Ans' as a single token
+                if (expression.substring(cursorPosition - 3, cursorPosition) === 'Ans') {
+                    newExpr = expression.slice(0, cursorPosition - 3);
+                    newCursorPos = cursorPosition - 3;
+                }
+
+                // Handle final '0' and cursor position
+                if (newExpr === '') {
+                    result.newExpr = '0';
+                    result.newCursorPos = 1;
+                } else {
+                    result.newExpr = newExpr;
+                    result.newCursorPos = newCursorPos;
+                }
             }
             return result;
         
@@ -201,7 +214,6 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 }
 
                 let evaluatedResult = evaluate(expr).toString();
-                console.log(typeof evaluatedResult);
 
                 // Throws an error if the result is an object
                 if (typeof evaluatedResult === 'object' && 'im' in evaluatedResult && evaluatedResult.im !== 0) {
