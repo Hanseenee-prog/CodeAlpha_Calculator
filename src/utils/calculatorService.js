@@ -1,11 +1,6 @@
 import { evaluate } from 'mathjs';
 import { getCurrentNumberAfterCursor } from './getCurrentNumberAfterCursor';
 
-/**
- * Formats a numerical result, applying rounding, scientific notation, and rounding DOWN.
- * @param {number} resultValue - The raw number result from evaluation.
- * @returns {string} The formatted result string.
- */
 const formatResult = (resultValue) => {
     // Define the boundaries for switching to scientific notation
     const EXPONENTIAL_THRESHOLD = 1e12; // Numbers larger than 1 trillion
@@ -19,13 +14,13 @@ const formatResult = (resultValue) => {
 
     const absValue = Math.abs(resultValue);
 
-    // 1. Check for Scientific Notation (Exponential)
+    // Check for Scientific Notation (Exponential)
     if (absValue >= EXPONENTIAL_THRESHOLD || (absValue < DECIMAL_THRESHOLD && absValue !== 0)) {
         // Use toExponential(N) to show N digits after the decimal point
         return resultValue.toExponential(DECIMAL_PLACES).toString();
     } 
 
-    // 2. Standard Rounding (Rounded Down)
+    // Standard Rounding (Rounded Down)
     else {
         // To round down, we use Math.floor on the scaled number
         const scale = Math.pow(10, DECIMAL_PLACES);
@@ -202,7 +197,6 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 const beforeNumber = expression.slice(0, startIndex);
                 const afterNumber = expression.slice(endIndex);
 
-                // --- TOGGLE LOGIC ---
                 // Check if the current number (before formatting) is close to 1 / lastAns
                 // This means the user is pressing reciprocal a second time on a reciprocated result.
                 if (Math.abs(numberToReciprocate - (1 / lastAns)) < tolerance) {
@@ -215,9 +209,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                      // Crucially, lastAns is NOT updated, preserving the original number for future calculations
                      return result;
                 }
-                // --- END TOGGLE LOGIC ---
-
-
+            
                 // Get the reciprocal of the number (raw number)
                 const rawReciprocalValue = 1 / numberToReciprocate;
 
