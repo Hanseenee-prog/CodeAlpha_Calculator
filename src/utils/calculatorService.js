@@ -1,9 +1,44 @@
 import { evaluate } from 'mathjs';
 import { getCurrentNumberAfterCursor } from './getCurrentNumberAfterCursor';
 
+/**
+ * Formats a numerical result, applying rounding or scientific notation (e)
+ * for very large or very small numbers.
+ * @param {number} resultValue - The raw number result from evaluation.
+ * @returns {string} The formatted result string.
+ */
+const formatResult = (resultValue) => {
+    // Define the boundaries for switching to scientific notation
+    const EXPONENTIAL_THRESHOLD = 1e12; // Numbers larger than 1 trillion
+    const DECIMAL_THRESHOLD = 1e-10; // Numbers smaller than 0.0000000001
+    const DECIMAL_PLACES = 10; // Number of decimal places to round to
+
+    // Skip formatting for the result '0' or non-numbers
+    if (typeof resultValue !== 'number' || isNaN(resultValue) || resultValue === 0) {
+        return String(resultValue);
+    }
+    
+    const absValue = Math.abs(resultValue);
+
+    // 1. Check for Scientific Notation (Exponential)
+    if (absValue >= EXPONENTIAL_THRESHOLD || (absValue < DECIMAL_THRESHOLD && absValue !== 0)) {
+        // Use toExponential(N) to show N digits after the decimal point
+        return resultValue.toExponential(DECIMAL_PLACES).toString();
+    } 
+    
+    // 2. Standard Rounding
+    else {
+        // Use toFixed() to round to a fixed number of decimal places.
+        let rounded = resultValue.toFixed(DECIMAL_PLACES);
+        
+        // Remove trailing zeros and the decimal point if it's an integer (e.g., "5.000" -> "5")
+        return rounded.replace(/\.?0+$/, '');
+    }
+};
+
 const validateInput = (expression, cursorPosition, newText) => {
     const { currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);
-    
+
     const checks = {
         isNumber: /[0-9√]/.test(newText),
         isDecimal: newText === '.',
@@ -36,12 +71,12 @@ const validateInput = (expression, cursorPosition, newText) => {
 
     // Check if any rule blocks the input
     const isBlocked = Object.values(VALIDATION_RULES).some(rule => rule);
-    
+
     return { isBlocked, checks }
 }
 
 const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) => {
-    if (!newText) return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
+    // Note: The logic for handling `!newText` was removed as `newText` is required by the caller.
 
     let newExpr = expression;
     let newCursorPos = cursorPosition;
@@ -65,18 +100,22 @@ const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) 
     }
 
     if (checks.isZero) {
+        updatedIsResultDisplayed = false;
         // Handle '0' to '0.'
         if (checks.isDecimal) {
             newExpr = '0.';
             newCursorPos = 2;
         } 
         // Handle initial '0' replacement
-        else if (checks.isNumber) {
+        else if (checks.isNumber || newText === 'Ans') {
             newExpr = newText;
             newCursorPos = newText.length;
+        } else {
+            // If operator, fall through to normal insertion logic: '0' + '+' = '0+'
+             newExpr = newExpr.slice(0, cursorPosition) + newText + newExpr.slice(cursorPosition);
+             newCursorPos = cursorPosition + newText.length;
         }
 
-        updatedIsResultDisplayed = false;
         return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
     }
 
@@ -99,13 +138,13 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
     switch (actionType) {
         case 'insert_text': {
             let updates = insertAtCursor(expression, cursorPosition, value, isResultDisplayed);
-            
+
             result.newExpr = updates.newExpr;
             result.newCursorPos = updates.newCursorPos;
             result.isResultDisplayed = updates.isResultDisplayed;
             return result;
         }
-        
+
         case 'delete':
             if (expression === '0') return result;
 
@@ -115,7 +154,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
                 // Handle deletion of 'Ans' as a single token
                 if (expression.substring(cursorPosition - 3, cursorPosition) === 'Ans') {
-                    newExpr = expression.slice(0, cursorPosition - 3);
+                    newExpr = expression.slice(0, cursorPosition - 3) + expression.slice(cursorPosition);
                     newCursorPos = cursorPosition - 3;
                 }
 
@@ -129,22 +168,23 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 }
             }
             return result;
-        
+
         case 'reciprocal': {
             const { startIndex, endIndex, currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);
-            let number = currentNumber;
-            let newExpr = 0;
+            let numberString = currentNumber;
+            let newExpr = '';
             let newCursorPos = 0;
 
             try {
-                // If number has percent '%' replace it with the number divided by 100
-                if (number.endsWith('%')) {
-                    const numValue = parseFloat(number) / 100;
-                    number = String(numValue);
+                // If number has percent '%', convert it to a true decimal value
+                if (numberString.endsWith('%')) {
+                    numberString = String(parseFloat(numberString) / 100);
                 }
+                
+                const numberValue = parseFloat(numberString);
 
-                // if number is zero or not a number, show an error
-                if (isNaN(expression) || expression === '0') {
+                // 🚨 FIX: Check current number value for zero/NaN, not the entire expression
+                if (isNaN(numberValue) || numberValue === 0) {
                     result.newExpr = 'Error(Cannot divide by zero)';
                     result.newCursorPos = result.newExpr.length;
                     result.isResultDisplayed = true;
@@ -152,7 +192,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 }
 
                 // Get the reciprocal of the number
-                const reciprocal = String(1 / number);
+                const reciprocal = String(1 / numberValue);
 
                 // Get the other numbers before and after the current one
                 const beforeNumber = expression.slice(0, startIndex);
@@ -175,10 +215,10 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
         case 'negate': {
             const { startIndex, endIndex, currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);
-            
+
             // If the current number is 0 or empty, don't negate
             if (currentNumber === '0' || currentNumber === '') return result;
-            
+
             const beforeNumber = expression.slice(0, startIndex);
             const afterNumber = expression.slice(endIndex);
 
@@ -191,7 +231,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
                 const unnegatedBefore = beforeNumber.slice(0, -2);
                 const unnegatedAfter = isFollowedByParen ? afterNumber.slice(1) : afterNumber;
-                
+
                 result.newExpr = unnegatedBefore + currentNumber + unnegatedAfter;
                 result.newCursorPos = unnegatedBefore.length + currentNumber.length;
             } else {
@@ -202,7 +242,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
             }
             return result;
         }
-        
+
         case 'calculate':
             try {
                 // Replace 'Ans' with actual value before evaluation
@@ -213,35 +253,42 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                     expr = expr.replace(/√([^+\-*/\x^])+/g, "sqrt($1)");
                 }
 
-                let evaluatedResult = evaluate(expr).toString();
+                // 1. Evaluate the expression (returns number or complex object)
+                let evaluatedResult = evaluate(expr);
 
-                // Throws an error if the result is an object
+                // 2. Check for Complex/Invalid Results from mathjs
                 if (typeof evaluatedResult === 'object' && 'im' in evaluatedResult && evaluatedResult.im !== 0) {
-                    throw new Error('Non-real result(Imaginary number)')
+                    throw new Error('Non-real result (Imaginary number)');
                 }
 
-                result.resultValue = evaluate(evaluatedResult);
-                result.newExpr = String(evaluatedResult);
-                result.lastAns = evaluatedResult;
+                // 🚨 INTEGRATION POINT: Format the successful numerical result
+                const formattedString = formatResult(evaluatedResult); 
+
+                // Success path
+                result.resultValue = formattedString; // Use formatted string for display
+                result.newExpr = formattedString;
+                result.lastAns = evaluatedResult; // Store the original, high-precision number for 'Ans' use
                 result.newCursorPos = result.newExpr.length;
                 result.isResultDisplayed = true;
 
                 return result;
             } catch (err) {
                 result.resultValue = 'Error';
+                result.newExpr = 'Error';
                 result.isResultDisplayed = true;
                 console.log('Error', err);
                 return result;
             }
-        
+
         case 'clear':
             result.newExpr ='0';
             result.resultValue = '0';
+            result.newCursorPos = 1;
             result.isResultDisplayed = false;
             return result;
 
         default:
             return result;
     }
-    
+
 }
