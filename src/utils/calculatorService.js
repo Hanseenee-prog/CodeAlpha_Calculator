@@ -1,7 +1,11 @@
 import { evaluate } from 'mathjs';
 import { getCurrentNumberAfterCursor } from './getCurrentNumberAfterCursor';
 
-// Formats a result, responsible for rounding up or down
+/**
+ * Formats a numerical result, applying rounding, scientific notation, and rounding DOWN.
+ * @param {number} resultValue - The raw number result from evaluation.
+ * @returns {string} The formatted result string.
+ */
 const formatResult = (resultValue) => {
     // Define the boundaries for switching to scientific notation
     const EXPONENTIAL_THRESHOLD = 1e12; // Numbers larger than 1 trillion
@@ -12,21 +16,27 @@ const formatResult = (resultValue) => {
     if (typeof resultValue !== 'number' || isNaN(resultValue) || resultValue === 0) {
         return String(resultValue);
     }
-    
+
     const absValue = Math.abs(resultValue);
 
-    // Check for Scientific Notation (Exponential)
+    // 1. Check for Scientific Notation (Exponential)
     if (absValue >= EXPONENTIAL_THRESHOLD || (absValue < DECIMAL_THRESHOLD && absValue !== 0)) {
         // Use toExponential(N) to show N digits after the decimal point
         return resultValue.toExponential(DECIMAL_PLACES).toString();
     } 
-    
-    // Standard Rounding
+
+    // 2. Standard Rounding (Rounded Down)
     else {
-        // Use toFixed() to round to a fixed number of decimal places.
-        let rounded = resultValue.toFixed(DECIMAL_PLACES);
+        // To round down, we use Math.floor on the scaled number
+        const scale = Math.pow(10, DECIMAL_PLACES);
         
-        // Remove trailing zeros and the decimal point if it's an integer (e.g., "5.000" -> "5")
+        // This rounds the number down to the specified decimal places
+        let roundedValue = Math.floor(resultValue * scale) / scale; 
+        
+        // Convert to string and ensure it has necessary zeros/no trailing dot
+        let rounded = roundedValue.toFixed(DECIMAL_PLACES);
+        
+        // Remove trailing zeros and the decimal point if it's an integer
         return rounded.replace(/\.?0+$/, '');
     }
 };
@@ -71,8 +81,6 @@ const validateInput = (expression, cursorPosition, newText) => {
 }
 
 const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) => {
-    // Note: The logic for handling `!newText` was removed as `newText` is required by the caller.
-
     let newExpr = expression;
     let newCursorPos = cursorPosition;
     let updatedIsResultDisplayed = isResultDisplayed;
@@ -171,40 +179,68 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
             let newCursorPos = 0;
 
             try {
-                // If number has percent '%', convert it to a true decimal value
-                if (numberString.endsWith('%')) {
-                    numberString = String(parseFloat(numberString) / 100);
-                }
+                let numberToReciprocate = parseFloat(numberString);
                 
-                const numberValue = parseFloat(numberString);
+                // Check for Percentage and apply conversion
+                if (numberString.endsWith('%')) {
+                    if (isNaN(numberToReciprocate)) {
+                        throw new Error('Invalid number for percentage calculation');
+                    }
+                    numberToReciprocate /= 100;
+                }
 
-                // Check current number value for zero/NaN, not the entire expression
-                if (isNaN(numberValue) || numberValue === 0) {
+                // Check current number value for zero/NaN
+                if (isNaN(numberToReciprocate) || numberToReciprocate === 0) {
                     result.newExpr = 'Error(Cannot divide by zero)';
                     result.newCursorPos = result.newExpr.length;
                     result.isResultDisplayed = true;
                     return result;
                 }
-
-                // Get the reciprocal of the number
-                const reciprocalValue = 1 / numberValue;
-
-                // Get the other numbers before and after the current one
+                
+                // The tolerance for floating point comparison
+                const tolerance = 1e-10; 
                 const beforeNumber = expression.slice(0, startIndex);
                 const afterNumber = expression.slice(endIndex);
 
-                newExpr = beforeNumber + formatResult(reciprocalValue) + afterNumber;
-                newCursorPos = (beforeNumber + formatResult(reciprocalValue)).length;
+                // --- TOGGLE LOGIC ---
+                // Check if the current number (before formatting) is close to 1 / lastAns
+                // This means the user is pressing reciprocal a second time on a reciprocated result.
+                if (Math.abs(numberToReciprocate - (1 / lastAns)) < tolerance) {
+                     // Revert to the high-precision original number (lastAns)
+                     const revertedNumber = formatResult(lastAns);
+                     
+                     result.newExpr = beforeNumber + revertedNumber + afterNumber;
+                     result.newCursorPos = (beforeNumber + revertedNumber).length;
+                     result.isResultDisplayed = false;
+                     // Crucially, lastAns is NOT updated, preserving the original number for future calculations
+                     return result;
+                }
+                // --- END TOGGLE LOGIC ---
+
+
+                // Get the reciprocal of the number (raw number)
+                const rawReciprocalValue = 1 / numberToReciprocate;
+
+                // Format the reciprocal before inserting it
+                const formattedReciprocal = formatResult(rawReciprocalValue);
+
+                // Insertion back into expression
+                newExpr = beforeNumber + formattedReciprocal + afterNumber;
+                newCursorPos = (beforeNumber + formattedReciprocal).length;
+
+                // Store the raw, unrounded value for the next toggle press!
+                result.lastAns = numberToReciprocate;
             } 
-            catch {
-                console.log('Error by reciprocal');
+            catch (e) {
+                console.log('Error by reciprocal', e);
                 newExpr = 'Error';
                 newCursorPos = newExpr.length;
+                result.isResultDisplayed = true;
             }
 
             result.newExpr = newExpr;
             result.newCursorPos = newCursorPos;
-            result.isResultDisplayed = true;
+            result.isResultDisplayed = false; // It's an insertion, not a final result display
             return result;
         }
 
@@ -256,7 +292,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                     throw new Error('Non-real result (Imaginary number)');
                 }
 
-                // 🚨 INTEGRATION POINT: Format the successful numerical result
+                // Format the successful numerical result
                 const formattedString = formatResult(evaluatedResult); 
 
                 // Success path
