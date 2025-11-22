@@ -276,10 +276,10 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                     expr = expr.replace(/√([^+\-*/\x^])+/g, "sqrt($1)");
                 }
 
-                // 1. Evaluate the expression (returns number or complex object)
+                // Evaluate the expression (returns number or complex object)
                 let evaluatedResult = evaluate(expr);
 
-                // 2. Check for Complex/Invalid Results from mathjs
+                // Check for Complex/Invalid Results from mathjs
                 if (typeof evaluatedResult === 'object' && 'im' in evaluatedResult && evaluatedResult.im !== 0) {
                     throw new Error('Non-real result (Imaginary number)');
                 }
