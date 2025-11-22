@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import SoundRecorder from "./SoundRecorder";
 
 const CalcDisplay = ({ expression, result, cursorPosition }) => {
     const displayRef = useRef(null);
@@ -12,16 +13,19 @@ const CalcDisplay = ({ expression, result, cursorPosition }) => {
     const partAfterCursor = expression.slice(cursorPosition);
 
     return ( 
-        <div className="">
+        <div className="
+            h-40 border-[3px] w-full rounded-2xl relative
+            flex flex-row items-stretch
+        ">
             <div 
                 id="calcDisplay"
-                className="h-40 border-[3px] w-full rounded-2xl"
+                className=""
                 ref={displayRef}
                 tabIndex={0} 
             >
                 {/* Span for calculations display */}
                 <span 
-                    className="relative font-semibold text-6xl float-left inline-block">
+                    className="relative font-semibold text-6xl">
                         {partBeforeCursor}
                     <span className="font-">|</span> {/* The cursor */}
                         {partAfterCursor}
@@ -30,6 +34,8 @@ const CalcDisplay = ({ expression, result, cursorPosition }) => {
                 {/* Span for results display */}
                 <span>{result}</span>
             </div>
+
+            <SoundRecorder />
         </div>
     );
 }
