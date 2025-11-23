@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { parseVoiceCommand } from "../utils/parseVoiceCommand";
 
-const SoundRecorder = () => {
+const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
     const [isListening, setIsListening] = useState(false);
 
@@ -29,6 +30,7 @@ const SoundRecorder = () => {
 
         recognition.onend = () => {
             console.log('Voice recognition ended.');
+            setIsListening(false);
         }
 
         recognition.onresult = (e) => {
@@ -36,13 +38,15 @@ const SoundRecorder = () => {
             console.log(e.results);
             console.log('You said', text);
 
-            // if (onTranscript) onTranscript(text);
+            const command = parseVoiceCommand(text);
+
+            if (onTranscript) onTranscript(command);
         }
 
         recognition.onerror = (e) => {
             console.log('Speech error', e);
         }
-    }, []) // Only run once after the component unmounts
+    }, [onTranscript]) // Only run once after the component unmounts
 
     const startVoiceRecorder = () => {
         const recognition = recognitionRef.current;

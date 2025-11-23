@@ -14,6 +14,7 @@ export const useCalcLogic = () => {
 
     // Function to move the cursor
     const moveCursor = useCallback(direction => {
+        console.log('Command to move', direction)
         setCursorPosition(prevPosition => {
             if (expression === '0') return prevPosition;
 
@@ -30,6 +31,7 @@ export const useCalcLogic = () => {
                 if (expression.substring(prevPosition, prevPosition + 3) === 'Ans') return prevPosition + 3;
             }
 
+            console.log('Done command', direction)
             return newPosition;
         })
     }, [expression]);
@@ -74,6 +76,8 @@ export const useCalcLogic = () => {
         clear,
         cursorPosition,
         isResultDisplayed,
-        setIsResultDisplayed
+        setIsResultDisplayed,
+        handleAction,
+        moveCursor
     };
 };

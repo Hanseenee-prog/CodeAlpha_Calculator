@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import SoundRecorder from "./SoundRecorder";
 
-const CalcDisplay = ({ expression, result, cursorPosition }) => {
+const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
     const displayRef = useRef(null);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const CalcDisplay = ({ expression, result, cursorPosition }) => {
                 <span 
                     className="relative font-semibold text-6xl">
                         {partBeforeCursor}
-                    <span className="font-">|</span> {/* The cursor */}
+                    <span className="">|</span> {/* The cursor */}
                         {partAfterCursor}
                 </span>
 
@@ -35,7 +35,9 @@ const CalcDisplay = ({ expression, result, cursorPosition }) => {
                 <span>{result}</span>
             </div>
 
-            <SoundRecorder />
+            <SoundRecorder 
+                onTranscript={onTranscript}
+            />
         </div>
     );
 }
