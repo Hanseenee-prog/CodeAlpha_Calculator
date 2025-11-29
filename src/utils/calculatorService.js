@@ -273,9 +273,10 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
                 // Replace '√' with sqrt(text) until the next operator
                 if (expr.includes('√')) {
-                    expr = expr.replace(/√([^+\-*/\x^])+/g, "sqrt($1)");
+                    expr = expr.replace(/√([^+\-*/\x^])+/g, 'sqrt($1)');
                 }
 
+                console.log(expr);
                 // Evaluate the expression (returns number or complex object)
                 let evaluatedResult = evaluate(expr);
 

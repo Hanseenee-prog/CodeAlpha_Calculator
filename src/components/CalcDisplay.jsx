@@ -21,13 +21,13 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
                 id="calcDisplay"
                 className=""
                 ref={displayRef}
-                tabIndex={0} 
+                // tabIndex={0} 
             >
                 {/* Span for calculations display */}
                 <span 
                     className="relative font-semibold text-6xl">
                         {partBeforeCursor}
-                    <span className="">|</span> {/* The cursor */}
+                    <span className="font-light">|</span> {/* The cursor */}
                         {partAfterCursor}
                 </span>
 

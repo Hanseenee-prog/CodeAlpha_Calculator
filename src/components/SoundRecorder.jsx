@@ -12,15 +12,14 @@ const SoundRecorder = ({ onTranscript }) => {
             console.log('Your brower doesn\'t support speech recognition');
             return;
         }
-        console.log('supported')
     
         // Initialize the speech recorder once
         const recognition = new SpeechRecognition();
         recognition.lang = 'en-US';
         recognition.continuous = true;
-        recognition.interimResults = false;
+        recognition.interimResults = true;
 
-        // Save it
+        // Save it`
         recognitionRef.current = recognition;
 
         // Event listeners
@@ -34,19 +33,51 @@ const SoundRecorder = ({ onTranscript }) => {
         }
 
         recognition.onresult = (e) => {
-            const text = e.results[0][0].transcript;
-            console.log(e.results);
-            console.log('You said', text);
+            // Get the latest result
+            const lastResultIndex = e.results.length - 1;
+            const result = e.results[lastResultIndex];
+            
+            // Only process final results
+            if (result.isFinal) {
+                const text = result[0].transcript;
+                console.log('Final:', text);
+                // console.log(e.results);
 
-            const command = parseVoiceCommand(text);
-
-            if (onTranscript) onTranscript(command);
+                const command = parseVoiceCommand(text);
+                if (command && onTranscript) onTranscript(command);
+            }
+            else {
+                const text = result[0].transcript;
+                console.log('Interim', text);
+            }
         }
 
         recognition.onerror = (e) => {
-            console.log('Speech error', e);
+            console.log('Speech error', e.error);
+            if (e.error === 'network') {
+                console.log('Network error - retrying...')
+
+                // Auto-restart after network error
+                setTimeout(() => {
+                    if (isListening) {
+                        try {
+                            recognition.start();
+                        } catch {
+                            console.log('Already running.')
+                        }
+                    }
+                }, 1000);
+            }
+
+            if (e.error === 'no-speech') console.log('No speech detected, try again..');
+            if (e.error === 'aborted') console.log('Recognition aborted')
         }
-    }, [onTranscript]) // Only run once after the component unmounts
+
+        // Cleanup function
+        return () => {
+            if (recognitionRef.current) recognitionRef.current.stop();
+        }
+    }, [onTranscript, isListening]) // Only run once after the component unmounts
 
     const startVoiceRecorder = () => {
         const recognition = recognitionRef.current;
@@ -57,7 +88,7 @@ const SoundRecorder = ({ onTranscript }) => {
             console.log('Voice recorder started...');
             setIsListening(true);
         } catch (e) {
-            console.log('Recognition already started', e);
+            console.log('Recognition already started', e.error);
         }
     }
 

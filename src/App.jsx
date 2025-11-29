@@ -1,17 +1,19 @@
 import './App.css'
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Header from './components/Header';
 import SideBar from './components/SideBar';
 import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
 import { useCalcLogic } from './utils/useCalcLogic';
+import delay from './utils/delay';
 
 function App() {
   const [ isOpen, setIsOpen ] = useState(false);
   const [ buttons, setButtons ] = useState(standardButtons);
   const { expression, result, onButtonClick, clear, cursorPosition, handleAction, moveCursor } = useCalcLogic();
   const [ mode, setMode ] = useState('Standard');
+  const isProcessingVoice = useRef(false);
 
   // Handle mode change - like scientific, standard, etc
   const handleModeChange = (newMode) => {
@@ -27,29 +29,44 @@ function App() {
 
   const handleVoiceCommand = useCallback(async (command) => {
     // Process the voice command here
-    console.log('Voice Command Received in App:', command, command.type, command.value);
+    console.log('Voice Command Received in App:', command);
+    if (!command) return;
 
-    if (command.type === 'insert_text' && command.value) {
-      // For insert_text, we pass the value
-      // const characters = command.value.split('');
-
-      // for (const char of characters) {
-        handleAction('insert_text', command.value);
-        // await delay(15);
-      // }
-
-      console.log('Text Command recieved', command.type)
-      return;
-    } 
-    else if (command.type === 'left' || command.type === 'right') {
-      console.log('Command received', command.type)
-      moveCursor(command.type);
-      return;
-    } 
-    else {
-      handleAction(command.type);
+    while (isProcessingVoice.current) {
+      await delay(50);
     }
-  }, [handleAction, moveCursor]);
+    isProcessingVoice.current = true;
+
+    try {
+      // Handle action commands
+      if (command.type !== 'insert_text') {
+        if (command.type === 'left' || command.type === 'right') {
+          moveCursor(command.type);
+        }
+        else if (command.type === 'calculate') {
+          await delay(200);
+          handleAction('calculate');
+          console.log('waited')
+        }
+        else handleAction(command.type); 
+        return;
+      }
+
+      // Handle insert commands
+      if (command.type === 'insert_text' && command.value) {
+        const characters = command.value.split('');
+
+        for (const char of characters) {
+          handleAction('insert_text', char);
+          console.log(char);
+          await delay(100);
+        }
+      }
+    } 
+    finally {
+      isProcessingVoice.current = false;
+    }
+  }, [moveCursor, handleAction]);
 
   return (
     <div className='
