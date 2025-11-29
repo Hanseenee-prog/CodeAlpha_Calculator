@@ -8,7 +8,7 @@ import { standardButtons, scientificButtons, programmerButtons } from './data/bu
 import { useCalcLogic } from './utils/useCalcLogic';
 import delay from './utils/delay';
 
-function App() {
+function Calculator() {
   const [ isOpen, setIsOpen ] = useState(false);
   const [ buttons, setButtons ] = useState(standardButtons);
   const { expression, result, onButtonClick, clear, cursorPosition, handleAction, moveCursor } = useCalcLogic();
@@ -29,7 +29,7 @@ function App() {
 
   const handleVoiceCommand = useCallback(async (command) => {
     // Process the voice command here
-    console.log('Voice Command Received in App:', command);
+    console.log('Voice Command Received in Calculator:', command);
     if (!command) return;
 
     while (isProcessingVoice.current) {
@@ -104,4 +104,4 @@ function App() {
   )
 }
 
-export default App;
+export default Calculator;
