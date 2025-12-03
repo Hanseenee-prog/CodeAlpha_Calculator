@@ -74,7 +74,7 @@ export const useCalcLogic = () => {
             cursorPosition: updates.newCursorPos,
             lastAns: updates.lastAns,
             isResultDisplayed: updates.isResultDisplayed,
-            resultValue: updates.result
+            resultValue: updates.resultValue
         }
 
         // Update other states
