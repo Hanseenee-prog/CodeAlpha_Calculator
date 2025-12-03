@@ -5,37 +5,37 @@ const Header = ({isOpen, setIsOpen}) => {
     }
 
     return ( 
-        <div className="calc-header bg-amber-50">
+        <div className="shrink-0 flex items-center bg-blue-300">
 
             {/* Calc Header content */}
-            <div className="calc-header-content bg-amber-500 w-full flex justify-center relative p-3">
-            <span className="hamburger-menu bg-blue-400 absolute left-3 cursor-pointer z-50"
-                    onClick={openSidebar}
-            >
-                {!isOpen ? (
-                    // Hamburger Icon
-                    <svg xmlns='http://www.w3.org/200/svg' 
-                        fill='none' 
-                        viewBox='0 0 24 24' 
-                        stroke='currentColor'
-                        strokeWidth={2}
-                        className='w-7 h-7 hover:scale-110'>
-                        <path strokeLinecap='round' strokeLinejoin='round' d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                ) : (
-                    // Close Icon
-                    <svg xmlns='http://www.w3.org/200/svg' 
-                        fill='none' 
-                        viewBox='0 0 24 24' 
-                        stroke='currentColor'
-                        strokeWidth={2}
-                        className='w-7 h-7 hover:scale-110'>
-                        <path strokeLinecap='round' strokeLinejoin='round' d="M6 18L18 6" />
-                        <path strokeLinecap='round' strokeLinejoin='round' d="M6 6L18 18" />
-                    </svg>
-                )}
-            </span>
-            <p>SmartCalcX</p>  
+            <div className="w-full flex justify-center items-center relative h-7">
+                <span className="absolute left-1 cursor-pointer z-50 p-1"
+                        onClick={openSidebar}
+                >
+                    {!isOpen ? (
+                        // Hamburger Icon
+                        <svg xmlns='http://www.w3.org/200/svg' 
+                            fill='none' 
+                            viewBox='0 0 24 24' 
+                            stroke='currentColor'
+                            strokeWidth={2}
+                            className='w-5 h-5 hover:scale-110'>
+                            <path strokeLinecap='round' strokeLinejoin='round' d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    ) : (
+                        // Close Icon
+                        <svg xmlns='http://www.w3.org/200/svg' 
+                            fill='none' 
+                            viewBox='0 0 24 24' 
+                            stroke='currentColor'
+                            strokeWidth={2}
+                            className='w-5 h-5 hover:scale-110'>
+                            <path strokeLinecap='round' strokeLinejoin='round' d="M6 18L18 6" />
+                            <path strokeLinecap='round' strokeLinejoin='round' d="M6 6L18 18" />
+                        </svg>
+                    )}
+                </span>
+                <p>SmartCalcX</p>  
             </div> 
         </div>
     );

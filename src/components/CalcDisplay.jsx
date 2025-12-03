@@ -14,18 +14,17 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
 
     return ( 
         <div className="
-            h-40 border-[3px] w-full rounded-2xl relative
+            h-40 w-full relative
             flex flex-row items-stretch
         ">
             <div 
-                id="calcDisplay"
                 className=""
                 ref={displayRef}
                 // tabIndex={0} 
             >
                 {/* Span for calculations display */}
                 <span 
-                    className="relative font-semibold text-6xl">
+                    className="relative font-semibold text-6xl flex flex-row">
                         {partBeforeCursor}
                     <span className="font-light">|</span> {/* The cursor */}
                         {partAfterCursor}

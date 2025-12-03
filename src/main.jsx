@@ -6,5 +6,5 @@ import Calculator from './Calculator.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Calculator />
-  </StrictMode>,
+  </StrictMode>
 )

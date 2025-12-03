@@ -7,39 +7,39 @@ export const standardButtons = [
   { label: 'MS', type: 'memory-store', style: 'memory' }, 
 
   // Row 2 - Clear and special functions 
-  { label: 'C', type: 'clear', style: 'clear' }, 
-  { label: 'DEL', type: 'DEL', style: 'clear' }, 
-  { label: '←', type: 'move_left', style: 'function' }, 
-  { label: '→', type: 'move_right', style: 'function' }, 
-  { label: '±', type: 'negate', style: 'function' }, 
+  { label: 'C', type: 'clear', style: 'accent' }, 
+  { label: 'DEL', type: 'DEL', style: 'accent' }, 
+  { label: '←', type: 'move_left', style: 'accent' }, 
+  { label: '→', type: 'move_right', style: 'accent' }, 
+  { label: '÷', value: '/', type: 'operator', style: 'accent' }, 
   { label: '√', value: '√', type: 'sqrt', style: 'function' }, 
   
   // Row 3 
   { label: '7', value: '7', type: 'number', style: 'number' }, 
   { label: '8', value: '8', type: 'number', style: 'number' }, 
   { label: '9', value: '9', type: 'number', style: 'number' }, 
-  { label: '÷', value: '/', type: 'operator', style: 'operator' }, 
+  { label: '×', value: '*', type: 'operator', style: 'accent' }, 
   { label: '%', value: '%', type: 'percent', style: 'function' }, 
   
   // Row 4 
   { label: '4', value: '4', type: 'number', style: 'number' }, 
   { label: '5', value: '5', type: 'number', style: 'number' }, 
-  { label: '6', value: '6', type: 'number', style: 'number' }, 
-  { label: '×', value: '*', type: 'operator', style: 'operator' }, 
+  { label: '6', value: '6', type: 'operator', style: 'number' }, 
+  { label: '-', value: '-', type: 'number', style: 'accent' }, 
   { label: '1/x', type: 'reciprocal', style: 'function' }, 
   
   // Row 5 
   { label: '1', value: '1', type: 'number', style: 'number' }, 
   { label: '2', value: '2', type: 'number', style: 'number' }, 
   { label: '3', value: '3', type: 'number', style: 'number' }, 
-  { label: '-', value: '-', type: 'operator', style: 'operator'}, 
-  { label: '+', value: '+', type: 'operator', style: 'operator' },
+  { label: '+', value: '+', type: 'operator', style: 'accent' },
+  { label: '±', type: 'negate', style: 'function' }, 
   
   // Row 6 
-  { label: '0', value: '0', type: 'number', style: 'number', span: 'col-span-2' }, 
   { label: '.', value: '.', type: 'decimal', style: 'number' }, 
+  { label: '0', value: '0', type: 'number', style: 'number', span: 'col-span-2' }, 
   { label: 'Ans', value: 'Ans', type: 'answer', style: 'answer' }, 
-  { label: '=', type: 'equals', style: 'equals' }, 
+  { label: '=', type: 'equals', style: 'accent' }, 
 ]; 
 
 export const scientificButtons = [
@@ -77,34 +77,41 @@ export const scientificButtons = [
   { label: 'M+', type: 'memory-add', style: 'memory' }, 
   { label: 'M-', type: 'memory-subtract', style: 'memory' }, 
   { label: 'MS', type: 'memory-store', style: 'memory' }, 
+
+  // Row 6
+  { label: 'C', type: 'clear', style: 'accent' }, 
+  { label: 'DEL', type: 'DEL', style: 'accent' }, 
+  { label: '←', type: 'move_left', style: 'accent' }, 
+  { label: '→', type: 'move_right', style: 'accent' }, 
+  { label: '÷', value: '/', type: 'operator', style: 'accent' }, 
   
-  // Row 6 
+  // Row 7
+  { label: '%', value: '%', type: 'percent', style: 'function' }, 
   { label: '7', value: '7', type: 'number', style: 'number' }, 
   { label: '8', value: '8', type: 'number', style: 'number' }, 
   { label: '9', value: '9', type: 'number', style: 'number' }, 
-  { label: '÷', value: '/', type: 'operator', style: 'operator' }, 
-  { label: '%', type: 'percent', style: 'function' }, 
+  { label: '×', value: '*', type: 'operator', style: 'accent' }, 
   
-  // Row 7 
+  // Row 8
+  { label: 'n!', type: 'function', func: 'factorial', style: 'scientific' }, 
   { label: '4', value: '4', type: 'number', style: 'number' }, 
   { label: '5', value: '5', type: 'number', style: 'number' }, 
   { label: '6', value: '6', type: 'number', style: 'number' }, 
-  { label: '×', value: '*', type: 'operator', style: 'operator' }, 
-  { label: 'n!', type: 'function', func: 'factorial', style: 'scientific' }, 
+  { label: '-', value: '-', type: 'operator', style: 'accent' }, 
   
-  // Row 8 
+  // Row 9 
+  { label: '=', type: 'equals', style: 'equals' }, 
   { label: '1', value: '1', type: 'number', style: 'number' }, 
   { label: '2', value: '2', type: 'number', style: 'number' }, 
   { label: '3', value: '3', type: 'number', style: 'number' }, 
-  { label: '-', value: '-', type: 'operator', style: 'operator' }, 
-  { label: '=', type: 'equals', style: 'equals' }, 
+  { label: '+', value: '+', type: 'operator', style: 'accent' }, 
   
-  // Row 9
-  { label: 'C', type: 'clear', style: 'clear' }, 
-  { label: '0', value: '0', type: 'number', style: 'number' }, 
+  // Row 10
+  { label: '=', type: 'equals', style: 'accent' },
   { label: '.', value: '.', type: 'decimal', style: 'number' }, 
-  { label: '+', value: '+', type: 'operator', style: 'operator' }, 
-  { label: '=', type: 'equals', style: 'equals' },
+  { label: '0', value: '0', type: 'number', style: 'number' }, 
+  { label: 'Ans', value: 'Ans', type: 'answer', style: 'clear' }, 
+  { label: '=', type: 'equals', style: 'accent' },
 ];
 
 export const programmerButtons = [
