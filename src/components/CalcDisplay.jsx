@@ -18,7 +18,7 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
             flex flex-row items-stretch
         ">
             <div 
-                className=""
+                className="pl-3"
                 ref={displayRef}
                 // tabIndex={0} 
             >

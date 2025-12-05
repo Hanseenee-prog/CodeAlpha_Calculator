@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 import Header from './components/Header';
 import SideBar from './components/SideBar';
 import CalcDisplay from './components/CalcDisplay';
-import KeyPadGrid from './components/KeyPadGrid';
+import KeyPadGrid from './components/Keypad/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
 import { useCalcLogic } from './utils/useCalcLogic';
 import delay from './utils/delay';
@@ -73,7 +73,7 @@ function Calculator() {
       w-[90vw] h-[90vh] min-w-[320px] min-h-[480px]
       md:h-[80vh] md:max-w-[80vw] 
       lg:max-h-[80vh] lg:max-w-[60vw] 
-      bg-gray-100 rounded-4xl shadow-lg mx-auto'
+      bg-gray-100 shadow-lg mx-auto'
     >
                       
       <div className="h-full flex items-stretch flex-col w-full relative overflow-hidden">
