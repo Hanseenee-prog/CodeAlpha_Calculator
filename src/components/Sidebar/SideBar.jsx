@@ -93,14 +93,15 @@ const SideBar = ({ isOpen }) => {
                                     {NavIcon && <NavIcon className="w-4 h-4" />}
                                 </li>
 
-                                {isDropdown && isOpenDropdown && (
-                                    <div 
-                                        className="
-                                            p-4 bg-blue-100 m-2 rounded-lg shadow-inner
-                                        ">
+                                <div className={`
+                                    transition-all duration-500 ease-in-out overflow-hidden
+                                    ${isOpenDropdown ? 'max-h-screen' : 'max-h-0'}
+                                `}>
+                                    <div className="p-4 bg-blue-100 m-2 rounded-lg shadow-inner">
                                         {component}
                                     </div>
-                                )}
+                                </div>
+
                             </div>
                         );
                     })}
