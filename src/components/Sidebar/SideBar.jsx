@@ -1,50 +1,96 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Modes from './Modes'
-import History from './History'
-import Memory from './Memory'
+import LocalHistory from './LocalHistory'
+import LocalMemory from './LocalMemory'
 import Themes from './Themes'
-import Settings from './Settings'
+import LocalSettings from './LocalSettings'
 import About from './About'
-import {} from 'lucide-react'
+import { Calculator, History, Settings, MemoryStick, Palette, Info, ArrowLeft } from 'lucide-react'
 
-const SideBar = ({isOpen, setIsOpen }) => {
-    // Wrapped in a useCallback hook to prevent unnecessary re-rendering
-    const renderModes = useCallback(() => {
+const SideBar = ({ isOpen }) => {
+    // State to track the active view/component (null means main menu)
+    const [activeView, setActiveView] = useState(null); 
+
+    const renderMenuItems = useCallback(() => {
+        const navigateToView = (viewName) => {
+            setActiveView(viewName);
+        };
+
+        const goBack = () => {
+            setActiveView(null);
+        };
+        
         const menuItems = [
-            {label: 'Modes', component: <Modes />, icon: 'modes.svg'},
-            {label: 'History', component: <History />, icon: 'history.svg'},
-            {label: 'Memory', component: <Memory />, icon: 'memory.svg'},
-            {label: 'Themes', component: <Themes />, icon: 'themes.svg'},
-            {label: 'Settings', component: <Settings />, icon: 'settings.svg'},
-            {label: 'About', component: <About />, icon: 'about.svg'},
-        ]
+            { label: 'Modes', component: <Modes />, Icon: Calculator },
+            { label: 'History', component: <LocalHistory />, Icon: History },
+            { label: 'Memory', component: <LocalMemory />, Icon: MemoryStick },
+            { label: 'Themes', component: <Themes />, Icon: Palette },
+            { label: 'Settings', component: <LocalSettings />, Icon: Settings },
+            { label: 'About', component: <About />, Icon: Info },
+        ];
 
-        return <div className={`
-                    side-bar absolute bg-blue-200 top-0 left-0
-                    opacity-100 h-full z-30 rounded-tr-3xl rounded-br-3xl
-                    transition-all duration-300 overflow-hidden 
-                    ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
-                `}>
-                    <ul className="mt-12 relative w-full">
-                        {menuItems.map(item => {
-                            return (
-                                <li key={item.label}
-                                    className="m-2 p-3 border-black border-2 rounded-2xl
-                                            hover:bg-emerald-700"
-                                    onClick={() => {
-                                        setIsOpen(false)
-                                        // onModeChange(mode)
-                                    }}
-                                >
-                                    {item.label}
-                                </li>                        
-                            )
-                        })}
-                    </ul>
+        let contentToRender;
+
+        if (activeView === 'History') {
+            contentToRender = (
+                <div className="p-4 h-full flex flex-col"> 
+                    <button onClick={goBack} className="flex items-center text-blue-600 mb-4 p-2"> 
+                        <ArrowLeft className="w-5 h-5 mr-2" />
+                        Back to Menu
+                    </button>
+                    <LocalHistory />
                 </div>
-    }, [isOpen, setIsOpen]);
+            );
+        } 
+        else if (activeView === 'Modes') {
+            contentToRender = (
+                <div className="p-4 h-full flex flex-col">
+                    <button onClick={goBack} className="flex items-center text-blue-600 mb-4 p-2">
+                        <ArrowLeft className="w-5 h-5 mr-2" />
+                        Back to Menu
+                    </button>
+                    <Modes /> 
+                </div>
+            );
+        } 
+        else {
+            // Default view: the main menu list
+            contentToRender = (
+                <ul className="mt-12 relative w-full">
+                    {/* eslint-disable-next-line no-unused-vars */}
+                    {menuItems.map(({label, Icon}) => {
+                        return (
+                            <li key={label}
+                                className="
+                                    m-2 p-3 border-black border-2 rounded-2xl
+                                        hover:bg-emerald-700 flex items-center 
+                                        space-x-3 cursor-pointer
+                                "
+                                onClick={() => navigateToView(label)}
+                            >
+                                <Icon className="w-5 h-5" /> 
+                                <span>{label}</span>
+                            </li>                        
+                        )
+                    })}
+                </ul>
+            );
+        }
 
-    return renderModes();
+        // The main return wraps the dynamic content
+        return (
+            <div className={`
+                side-bar absolute bg-blue-200 top-0 left-0
+                opacity-100 h-full z-30 rounded-tr-3xl rounded-br-3xl
+                transition-all duration-300 overflow-hidden 
+                ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
+            `}> 
+                {contentToRender}
+            </div>
+        );
+    }, [isOpen, activeView]);
+
+    return renderMenuItems();
 }
  
 export default SideBar;
