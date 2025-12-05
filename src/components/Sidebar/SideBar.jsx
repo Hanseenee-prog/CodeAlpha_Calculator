@@ -5,19 +5,31 @@ import LocalMemory from './LocalMemory'
 import Themes from './Themes'
 import LocalSettings from './LocalSettings'
 import About from './About'
-import { Calculator, History, Settings, MemoryStick, Palette, Info, ArrowLeft } from 'lucide-react'
+import { 
+    Calculator, History, Settings, 
+    MemoryStick, Palette, Info, ArrowLeft,
+    ChevronDown, ChevronUp 
+} from 'lucide-react'
+
+const FULL_SCREEN_IDS = ['History', 'Memory', 'Settings'];
+const DROP_DOWN_IDS = ['Modes', 'Themes', 'About'];
 
 const SideBar = ({ isOpen }) => {
-    // State to track the active view/component (null means main menu)
-    const [activeView, setActiveView] = useState(null); 
+    // State to track the active view/component or dropdown view/component (null means main menu)
+    const [activeViewId, setActiveViewId] = useState(null);
+    const [dropdownOpenId, setDropdownOpenId] = useState(null);
 
     const renderMenuItems = useCallback(() => {
         const navigateToView = (viewName) => {
-            setActiveView(viewName);
+            setActiveViewId(viewName);
         };
 
+        const toggleDropdown = (dropdownName) => {
+            setDropdownOpenId(prevId => prevId === dropdownName ? null : dropdownName);
+        }
+
         const goBack = () => {
-            setActiveView(null);
+            setActiveViewId(null);
         };
         
         const menuItems = [
@@ -31,25 +43,17 @@ const SideBar = ({ isOpen }) => {
 
         let contentToRender;
 
-        if (activeView === 'History') {
+        if (activeViewId && FULL_SCREEN_IDS.includes(activeViewId)) {
+            const activeView = menuItems.find(item => item.label === activeViewId);
+
             contentToRender = (
                 <div className="p-4 h-full flex flex-col"> 
                     <button onClick={goBack} className="flex items-center text-blue-600 mb-4 p-2"> 
                         <ArrowLeft className="w-5 h-5 mr-2" />
                         Back to Menu
                     </button>
-                    <LocalHistory />
-                </div>
-            );
-        } 
-        else if (activeView === 'Modes') {
-            contentToRender = (
-                <div className="p-4 h-full flex flex-col">
-                    <button onClick={goBack} className="flex items-center text-blue-600 mb-4 p-2">
-                        <ArrowLeft className="w-5 h-5 mr-2" />
-                        Back to Menu
-                    </button>
-                    <Modes /> 
+
+                    {activeView.component}
                 </div>
             );
         } 
@@ -58,20 +62,47 @@ const SideBar = ({ isOpen }) => {
             contentToRender = (
                 <ul className="mt-12 relative w-full">
                     {/* eslint-disable-next-line no-unused-vars */}
-                    {menuItems.map(({label, Icon}) => {
+                    {menuItems.map(({label, component, Icon}) => {
+                        const isDropdown = DROP_DOWN_IDS.includes(label);
+                        const isOpenDropdown = dropdownOpenId === label;
+                        const NavIcon = isDropdown ? (isOpenDropdown ? ChevronUp : ChevronDown) : null;
+
+                        const handleClick = () => {
+                            if (FULL_SCREEN_IDS.includes(label)) {
+                                navigateToView(label);
+                            }
+                            else if (isDropdown) {
+                                toggleDropdown(label);
+                            }
+                        };
+
                         return (
-                            <li key={label}
-                                className="
-                                    m-2 p-3 border-black border-2 rounded-2xl
-                                        hover:bg-emerald-700 flex items-center 
-                                        space-x-3 cursor-pointer
-                                "
-                                onClick={() => navigateToView(label)}
-                            >
-                                <Icon className="w-5 h-5" /> 
-                                <span>{label}</span>
-                            </li>                        
-                        )
+                            <div key={label}>
+                                <li 
+                                    className="
+                                        m-2 p-3 border-black border-2 rounded-2xl
+                                            hover:bg-emerald-700 flex items-center justify-between
+                                            space-x-3 cursor-pointer
+                                    "
+                                    onClick={handleClick}
+                                >
+                                    <span className="flex items-center space-x-3">
+                                        <Icon className="w-5 h-5" /> 
+                                        <span>{label}</span>
+                                    </span>
+                                    {NavIcon && <NavIcon className="w-4 h-4" />}
+                                </li>
+
+                                {isDropdown && isOpenDropdown && (
+                                    <div 
+                                        className="
+                                            p-4 bg-blue-100 m-2 rounded-lg shadow-inner
+                                        ">
+                                        {component}
+                                    </div>
+                                )}
+                            </div>
+                        );
                     })}
                 </ul>
             );
@@ -88,7 +119,7 @@ const SideBar = ({ isOpen }) => {
                 {contentToRender}
             </div>
         );
-    }, [isOpen, activeView]);
+    }, [isOpen, activeViewId, dropdownOpenId]);
 
     return renderMenuItems();
 }
