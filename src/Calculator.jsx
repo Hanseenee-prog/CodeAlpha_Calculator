@@ -1,7 +1,7 @@
 import './App.css'
 import { useCallback, useRef, useState } from "react";
 import Header from './components/Header';
-import SideBar from './components/SideBar';
+import SideBar from './components/Sidebar/SideBar';
 import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/Keypad/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
