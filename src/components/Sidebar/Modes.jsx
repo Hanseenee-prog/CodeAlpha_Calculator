@@ -1,18 +1,17 @@
 import { useCallback } from 'react'
+import { useAppContext } from '../Contexts/AppContext';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const Modes = ({isOpen, setIsOpen, onModeChange }) => {
+const Modes = ({ onModeChange, setDropdownOpenId }) => {
+    const { setIsOpen } = useAppContext();
+
     // Wrapped in a useCallback hook to prevent unnecessary re-rendering
     const renderModes = useCallback(() => {
         const modes = ['Standard', 'Scientific', 'Programmer', 'Converter'];
 
         return (
-            <div className={`
-                side-bar absolute bg-blue-200 top-0 left-0
-                opacity-100 h-full z-30 rounded-tr-3xl rounded-br-3xl
-                transition-all duration-300 overflow-hidden 
-                ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
-            `}>
-                <ul className="mt-12 relative w-full">
+            <div className={``}>
+                <ul className="mt-2 relative w-full">
                     {modes.map(mode => {
                         return (
                             <li key={mode}
@@ -20,6 +19,7 @@ const Modes = ({isOpen, setIsOpen, onModeChange }) => {
                                         hover:bg-emerald-700"
                                 onClick={() => {
                                     setIsOpen(false)
+                                    setDropdownOpenId(null);
                                     onModeChange(mode)
                                 }}
                             >
@@ -27,14 +27,7 @@ const Modes = ({isOpen, setIsOpen, onModeChange }) => {
                                 {mode !== 'Converter' ? mode : (
                                     <span className="w-full flex justify-between">
                                         {mode}
-                                        <svg xmlns='http://www.w3.org/200/svg' 
-                                            fill='none' 
-                                            viewBox='0 0 24 24' 
-                                            stroke='currentColor'
-                                            strokeWidth={2}
-                                            className='w-7 h-7 hover:scale-110'>
-                                            <path strokeLinecap='round' strokeLinejoin='round' d="M4 6h16M4 12h16M4 18h16" />
-                                        </svg>
+                                        <ChevronDown className="w-4 h-4" />
                                     </span>
                                 )}
                             </li>                        
@@ -43,7 +36,7 @@ const Modes = ({isOpen, setIsOpen, onModeChange }) => {
                 </ul>
             </div>
         )   
-    }, [isOpen, setIsOpen, onModeChange]);
+    }, [setIsOpen, onModeChange, setDropdownOpenId]);
 
     return renderModes();
 }

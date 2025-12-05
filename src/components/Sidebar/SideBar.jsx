@@ -10,14 +10,16 @@ import {
     MemoryStick, Palette, Info, ArrowLeft,
     ChevronDown, ChevronUp 
 } from 'lucide-react'
+import { useAppContext } from "../Contexts/AppContext";
 
 const FULL_SCREEN_IDS = ['History', 'Memory', 'Settings'];
 const DROP_DOWN_IDS = ['Modes', 'Themes', 'About'];
 
-const SideBar = ({ isOpen }) => {
+const SideBar = ({ isOpen, onModeChange }) => {
     // State to track the active view/component or dropdown view/component (null means main menu)
     const [activeViewId, setActiveViewId] = useState(null);
     const [dropdownOpenId, setDropdownOpenId] = useState(null);
+    const { mode } = useAppContext();
 
     const renderMenuItems = useCallback(() => {
         const navigateToView = (viewName) => {
@@ -33,7 +35,7 @@ const SideBar = ({ isOpen }) => {
         };
         
         const menuItems = [
-            { label: 'Modes', component: <Modes />, Icon: Calculator },
+            { label: 'Modes', component: <Modes onModeChange={onModeChange} setDropdownOpenId={setDropdownOpenId} />, Icon: Calculator },
             { label: 'History', component: <LocalHistory />, Icon: History },
             { label: 'Memory', component: <LocalMemory />, Icon: MemoryStick },
             { label: 'Themes', component: <Themes />, Icon: Palette },
@@ -88,8 +90,15 @@ const SideBar = ({ isOpen }) => {
                                 >
                                     <span className="flex items-center space-x-3">
                                         <Icon className="w-5 h-5" /> 
-                                        <span>{label}</span>
+                                        <span>
+                                            {label}
+                                        </span>
                                     </span>
+
+                                    {label === 'Modes' && (
+                                        <span className="relative -right-12 text-sm font-bold">[{mode}]</span>
+                                    )}
+
                                     {NavIcon && <NavIcon className="w-4 h-4" />}
                                 </li>
 
@@ -120,7 +129,7 @@ const SideBar = ({ isOpen }) => {
                 {contentToRender}
             </div>
         );
-    }, [isOpen, activeViewId, dropdownOpenId]);
+    }, [isOpen, activeViewId, dropdownOpenId, onModeChange, mode]);
 
     return renderMenuItems();
 }

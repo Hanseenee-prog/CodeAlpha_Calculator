@@ -10,10 +10,9 @@ import delay from './utils/delay';
 import { useAppContext } from './components/Contexts/AppContext';
 
 function Calculator() {
-  const [ isOpen, setIsOpen ] = useState(false);
   const [ buttons, setButtons ] = useState(standardButtons);
   const { expression, result, onButtonClick, clear, cursorPosition, handleAction, moveCursor } = useCalcLogic();
-  const { setMode } = useAppContext();
+  const { setMode, isOpen, setIsOpen } = useAppContext();
   const isProcessingVoice = useRef(false);
 
   // Handle mode change - like scientific, standard, etc
