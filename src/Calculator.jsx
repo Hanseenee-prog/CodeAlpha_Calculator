@@ -7,12 +7,13 @@ import KeyPadGrid from './components/Keypad/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
 import { useCalcLogic } from './utils/useCalcLogic';
 import delay from './utils/delay';
+import { useAppContext } from './components/Contexts/AppContext';
 
 function Calculator() {
   const [ isOpen, setIsOpen ] = useState(false);
   const [ buttons, setButtons ] = useState(standardButtons);
   const { expression, result, onButtonClick, clear, cursorPosition, handleAction, moveCursor } = useCalcLogic();
-  const [ mode, setMode ] = useState('Standard');
+  const { setMode } = useAppContext();
   const isProcessingVoice = useRef(false);
 
   // Handle mode change - like scientific, standard, etc
@@ -97,7 +98,6 @@ function Calculator() {
         <KeyPadGrid 
           buttons={buttons}
           onButtonClick={onButtonClick}
-          mode={mode}
         />
       </div>
     </div>
