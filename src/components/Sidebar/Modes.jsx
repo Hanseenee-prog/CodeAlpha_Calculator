@@ -10,7 +10,7 @@ const Modes = ({ onModeChange, setDropdownOpenId }) => {
         const modes = ['Standard', 'Scientific', 'Programmer', 'Converter'];
 
         return (
-            <div className={``}>
+            <div className='w-full'>
                 <ul className="mt-2 relative w-full">
                     {modes.map(mode => {
                         return (
