@@ -62,7 +62,11 @@ const SideBar = ({ isOpen, onModeChange }) => {
         else {
             // Default view: the main menu list
             contentToRender = (
-                <ul className="mt-12 relative w-full">
+                <ul 
+                className="
+                mt-12 relative w-full h-[87%] overflow-y-scroll 
+                [&::-webkit-scrollbar]:hidden 
+            ">
                     {/* eslint-disable-next-line no-unused-vars */}
                     {menuItems.map(({label, component, Icon}) => {
                         const isDropdown = DROP_DOWN_IDS.includes(label);
@@ -70,21 +74,20 @@ const SideBar = ({ isOpen, onModeChange }) => {
                         const NavIcon = isDropdown ? (isOpenDropdown ? ChevronUp : ChevronDown) : null;
 
                         const handleClick = () => {
-                            if (FULL_SCREEN_IDS.includes(label)) {
-                                navigateToView(label);
-                            }
-                            else if (isDropdown) {
-                                toggleDropdown(label);
-                            }
+                            if (FULL_SCREEN_IDS.includes(label)) navigateToView(label);
+                            else if (isDropdown) toggleDropdown(label);
                         };
 
                         return (
-                            <div key={label}>
+                            <div 
+                                key={label}
+                                className="flex flex-col items-stretch mb-5"
+                            >
                                 <li 
                                     className="
-                                        m-2 p-3 border-black border-2 rounded-2xl
-                                            hover:bg-emerald-700 flex items-center justify-between
-                                            space-x-3 cursor-pointer
+                                        p-3 border-black border-2 rounded-2xl
+                                      hover:bg-emerald-700 flex items-center justify-between
+                                        space-x-3 cursor-pointer w-full
                                     "
                                     onClick={handleClick}
                                 >
@@ -95,6 +98,7 @@ const SideBar = ({ isOpen, onModeChange }) => {
                                         </span>
                                     </span>
 
+                                    {/* Always show the current mode */}
                                     {label === 'Modes' && (
                                         <span className="relative -right-12 text-sm font-bold">[{mode}]</span>
                                     )}
@@ -102,15 +106,15 @@ const SideBar = ({ isOpen, onModeChange }) => {
                                     {NavIcon && <NavIcon className="w-4 h-4" />}
                                 </li>
 
+                                {/* The dropdown div */}
                                 <div className={`
                                     transition-all duration-500 ease-in-out overflow-hidden
                                     ${isOpenDropdown ? 'max-h-screen' : 'max-h-0'}
                                 `}>
-                                    <div className="p-4 bg-blue-100 m-2 rounded-lg shadow-inner">
+                                    <div className="p-4 bg-blue-100 m-2 rounded-lg shadow-inner flex items-center justify-center">
                                         {component}
                                     </div>
                                 </div>
-
                             </div>
                         );
                     })}
@@ -118,10 +122,10 @@ const SideBar = ({ isOpen, onModeChange }) => {
             );
         }
 
-        // The main return wraps the dynamic content
+        // The main return wraps the dynamic content in the sidebar
         return (
             <div className={`
-                side-bar absolute bg-blue-200 top-0 left-0
+                absolute bg-blue-200 top-0 left-0
                 opacity-100 h-full z-30 rounded-tr-3xl rounded-br-3xl
                 transition-all duration-300 overflow-hidden 
                 ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
