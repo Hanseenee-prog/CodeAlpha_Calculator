@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import Modes from './Modes';
 import LocalHistory from './LocalHistory';
 import LocalMemory from './LocalMemory';
@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 
 import { useAppContext } from "../Contexts/AppContext";
-import { useEffect } from "react";
 
 const FULL_SCREEN_IDS = ['History', 'Memory', 'Settings'];
 const DROP_DOWN_IDS = ['Modes', 'Themes', 'About'];
@@ -24,6 +23,9 @@ const SideBar = ({ isOpen, onModeChange }) => {
     const [dropdownOpenId, setDropdownOpenId] = useState(null);
     const { mode } = useAppContext();
 
+    const aboutRef = useRef(null);
+    const menuListRef = useRef(null); 
+
     // Close all dropdowns or full views if sideBar is closed
     useEffect(() => {
         if (!isOpen) {
@@ -31,6 +33,31 @@ const SideBar = ({ isOpen, onModeChange }) => {
             setDropdownOpenId(null)
         }
     }, [isOpen])
+
+    useEffect(() => {
+        const scrollDelay = 400;
+
+        if (dropdownOpenId === 'Modes') {
+            if (menuListRef.current) {
+                menuListRef.current.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        if (dropdownOpenId === 'About' && aboutRef.current && menuListRef.current) {
+            
+            setTimeout(() => {
+                const aboutOffsetTop = aboutRef.current.offsetTop;
+
+                menuListRef.current.scrollTo({
+                    top: aboutOffsetTop,
+                    behavior: 'smooth'
+                });
+            }, scrollDelay); 
+        }
+    }, [dropdownOpenId]);
 
     const renderMenuItems = useCallback(() => {
         const navigateToView = (viewName) => {
@@ -74,8 +101,9 @@ const SideBar = ({ isOpen, onModeChange }) => {
             // Default view: the main menu list
             contentToRender = (
                 <ul 
+                    ref={menuListRef}
                     className="
-                        mt-5 relative w-full h-[87%] overflow-y-scroll 
+                        mt-5 relative w-full h-[86%] overflow-y-scroll 
                         [&::-webkit-scrollbar]:hidden 
                 ">
                     {/* eslint-disable-next-line no-unused-vars */}
@@ -86,11 +114,14 @@ const SideBar = ({ isOpen, onModeChange }) => {
 
                         const handleClick = () => {
                             if (FULL_SCREEN_IDS.includes(label)) navigateToView(label);
-                            else if (isDropdown) toggleDropdown(label);
+                            else if (isDropdown)  toggleDropdown(label);
                         };
+
+                        const itemRef = (label === 'About') ? aboutRef : null;
 
                         return (
                             <div 
+                                ref={itemRef}
                                 key={label}
                                 className="flex flex-col items-stretch mb-5"
                             >
