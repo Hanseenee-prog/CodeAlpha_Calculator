@@ -131,6 +131,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
         isResultDisplayed: isResultDisplayed,
         resultValue: resultValue,
         lastAns: lastAns,
+        history: {}
     }
 
     switch (actionType) {
@@ -294,6 +295,11 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
                 result.lastAns = evaluatedResult; // Store the original, high-precision number for 'Ans' use
                 result.newCursorPos = result.newExpr.length;
                 result.isResultDisplayed = true;
+
+                result.history = {
+                    expr: expr,
+                    evaluatedResult: String(evaluatedResult)
+                }
 
                 return result;
             } catch (err) {

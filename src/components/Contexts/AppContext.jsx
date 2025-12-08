@@ -12,10 +12,18 @@ export const AppProvider = ({ children }) => {
     const [expression, setExpression] = useState('0');
     const [cursorPosition, setCursorPosition] = useState(1);
     const [isResultDisplayed, setIsResultDisplayed] = useState(false);
-    const [history, setHistory] = useState([{expression: "5+5", result: "10"}, {expression: "10.3+8.8", result: "20"}, {expression: "25-1", result: "24"}]);
+
+    // Get saved history from local storage
+    const [history, setHistory] = useState(() => {
+        const saved = localStorage.getItem('calc-history');
+        return saved ? JSON.parse(saved) : [];
+    });
 
     const addHistoryEntry = (expression, result) => {
-        const newHistory = {expression, result};
+        // Replace sqrt(number) to √(number)
+        const displayExpression = expression.replace(/sqrt\(([^)]+)\)/g, '√($1)');
+
+        const newHistory = {displayExpression, result};
 
         setHistory(prevHistory => [newHistory, ...prevHistory]);
     }

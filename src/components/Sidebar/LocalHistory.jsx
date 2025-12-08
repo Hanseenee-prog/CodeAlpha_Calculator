@@ -1,45 +1,78 @@
 import { useCallback } from "react";
 import { useAppContext } from "../Contexts/AppContext";
+import { Trash2 } from 'lucide-react';
+import { useEffect } from "react";
 
 const LocalHistory = () => {
     const { 
-        history, setIsOpen, 
+        history, setHistory, setIsOpen, 
         setExpression, setCursorPosition,
         setIsResultDisplayed
     } = useAppContext();
+    
+    // Check if history is empty
+    const isEmptyHistory = (history && Object.keys(history).length === 0);
+
+    // Add local history to local storage
+    useEffect(() => {
+        localStorage.setItem('calc-history', JSON.stringify(history));
+    }, [history])
 
     const renderHistoryContent = useCallback(() => {
+        const clearHistory = () => {
+            setHistory([]);
+        }   
+
         return ( 
-            <div className="p-2 border-2 h-full">
-                {history.map(({expression, result}, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className="
-                                h-12 border-2 w-full cursor-pointer flex
-                                items-center bg-blue-100 hover:bg-blue-200
-                            "
-                        >
-                            <div 
-                                className="
-                                    flex flex-col w-full justify-end pr-2
-                                "
-                                onClick={() => {
-                                    setExpression(result);
-                                    setCursorPosition(result.length);
-                                    setIsOpen(false);
-                                    setIsResultDisplayed(false);
-                                }}
-                            >
-                                <span className="text-sm right-1 w-full text-right">{`${expression}=`}</span>
-                                <span className="font-semibold text-right w-full">{result}</span>
-                            </div>
-                        </div>
-                    )
-                })}
+            <div className="relative overflow-hidden h-full border-red-700 border-2">
+                {!(isEmptyHistory) ? (
+                    <div className="p-2 h-full">
+                        {history.map(({displayExpression, result}, index) => {
+                            return (
+                                <button
+                                    key={index}
+                                    className="
+                                        h-12 border-2 w-full cursor-pointer flex
+                                        items-center bg-blue-100 hover:bg-blue-200
+                                    "
+                                >
+                                    <div 
+                                        className="
+                                            flex flex-col w-full justify-end pr-2
+                                        "
+                                        onClick={() => {
+                                            setExpression(result);
+                                            setCursorPosition(result.length);
+                                            setIsOpen(false);
+                                            setIsResultDisplayed(false);
+                                        }}
+                                    >
+                                        <span className="text-sm right-1 w-full text-right">{`${displayExpression}=`}</span>
+                                        <span className="font-semibold text-right w-full">{result}</span>
+                                    </div>
+                                </button>
+                            )
+                        })}
+                    </div>
+                ) : (
+                    <div className="w-full text-center border-2 font-semibold text-[20px]">
+                        <p>No calculations in history yet...</p>
+                    </div>
+                )}
+
+                {!(isEmptyHistory) && (
+                    <button 
+                        className="
+                            w-full h-13 flex items-center justify-center cursor-pointer
+                            relative bottom-13 border-2 bg-blue-300 hover:bg-blue-400"
+                            onClick={() => clearHistory()}
+                    >
+                        <Trash2 className="w-5 h-5" />
+                    </button>)
+                }
             </div>
         );
-    }, [history, setCursorPosition, setExpression, setIsOpen, setIsResultDisplayed]);
+    }, [history, setCursorPosition, setExpression, setIsOpen, setIsResultDisplayed, isEmptyHistory, setHistory]);
 
     return renderHistoryContent();
 }

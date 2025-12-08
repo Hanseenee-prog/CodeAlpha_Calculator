@@ -72,6 +72,11 @@ export const useCalcLogic = () => {
             value
         )
 
+        // Check if the updates object returned history data
+        if (updates.history && Object.keys(updates.history).length > 0) {
+            addHistoryEntry(updates.history.expr, updates.history.evaluatedResult);
+        }
+
         // Update Ref immediately 
         stateRef.current = {
             expression: updates.newExpr,
@@ -87,7 +92,7 @@ export const useCalcLogic = () => {
         setLastAns(stateRef.current.lastAns);
         setResult(stateRef.current.resultValue);
         setIsResultDisplayed(stateRef.current.isResultDisplayed);
-    }, [setCursorPosition, setIsResultDisplayed, setExpression]);
+    }, [setCursorPosition, setIsResultDisplayed, setExpression, addHistoryEntry]);
 
     useKeyboardSupport(handleAction, moveCursor);
 
