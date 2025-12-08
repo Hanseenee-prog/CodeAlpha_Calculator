@@ -2,15 +2,18 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { handleButtonClick } from './buttonHandler';
 import { handleCalculationAction } from "./calculatorService";
 import { useKeyboardSupport } from "./useKeyboardSupport";
+import { useAppContext } from "../components/Contexts/AppContext";
 
 export const useCalcLogic = () => {
-    const [expression, setExpression] = useState('0');
+    const { 
+        expression, setExpression,
+        cursorPosition, setCursorPosition,
+        isResultDisplayed, setIsResultDisplayed,
+        addHistoryEntry // Re-add the history function
+    } = useAppContext();
+    
     const [result, setResult] = useState('0');
     const [lastAns, setLastAns] = useState('0'); // For controlling the 'Ans' button
-    const [isResultDisplayed, setIsResultDisplayed] = useState(false);
-
-    // Add cursor position state
-    const [cursorPosition, setCursorPosition] = useState(1) // Start after the first number '0'
 
     // Ref to hold latest state for voice commands
     const stateRef = useRef({
@@ -52,7 +55,7 @@ export const useCalcLogic = () => {
             stateRef.current.cursorPosition = newPosition;
             return newPosition;
         })
-    }, []);
+    }, [setCursorPosition]);
 
     const handleAction = useCallback((actionType, value) => {
         // Get current state from ref
@@ -65,6 +68,7 @@ export const useCalcLogic = () => {
             currentState.isResultDisplayed,
             currentState.lastAns,
             currentState.cursorPosition,
+            currentState.result,
             value
         )
 
@@ -83,7 +87,7 @@ export const useCalcLogic = () => {
         setLastAns(stateRef.current.lastAns);
         setResult(stateRef.current.resultValue);
         setIsResultDisplayed(stateRef.current.isResultDisplayed);
-    }, []);
+    }, [setCursorPosition, setIsResultDisplayed, setExpression]);
 
     useKeyboardSupport(handleAction, moveCursor);
 

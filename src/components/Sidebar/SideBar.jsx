@@ -1,16 +1,19 @@
 import { useCallback, useState } from "react";
-import Modes from './Modes'
-import LocalHistory from './LocalHistory'
-import LocalMemory from './LocalMemory'
-import Themes from './Themes'
-import LocalSettings from './LocalSettings'
-import About from './About'
+import Modes from './Modes';
+import LocalHistory from './LocalHistory';
+import LocalMemory from './LocalMemory';
+import Themes from './Themes';
+import LocalSettings from './LocalSettings';
+import About from './About';
+
 import { 
     Calculator, History, Settings, 
     MemoryStick, Palette, Info, ArrowLeft,
     ChevronDown, ChevronUp 
-} from 'lucide-react'
+} from 'lucide-react';
+
 import { useAppContext } from "../Contexts/AppContext";
+import { useEffect } from "react";
 
 const FULL_SCREEN_IDS = ['History', 'Memory', 'Settings'];
 const DROP_DOWN_IDS = ['Modes', 'Themes', 'About'];
@@ -20,6 +23,14 @@ const SideBar = ({ isOpen, onModeChange }) => {
     const [activeViewId, setActiveViewId] = useState(null);
     const [dropdownOpenId, setDropdownOpenId] = useState(null);
     const { mode } = useAppContext();
+
+    // Close all dropdowns or full views if sideBar is closed
+    useEffect(() => {
+        if (!isOpen) {
+            setActiveViewId(null);
+            setDropdownOpenId(null)
+        }
+    }, [isOpen])
 
     const renderMenuItems = useCallback(() => {
         const navigateToView = (viewName) => {
@@ -49,8 +60,8 @@ const SideBar = ({ isOpen, onModeChange }) => {
             const activeView = menuItems.find(item => item.label === activeViewId);
 
             contentToRender = (
-                <div className="p-4 h-full flex flex-col"> 
-                    <button onClick={goBack} className="flex items-center text-blue-600 mb-4 p-2"> 
+                <div className="pl-3.5 pr-3.5 h-full flex flex-col"> 
+                    <button onClick={goBack} className="flex items-center text-blue-600 mb-3 p-2"> 
                         <ArrowLeft className="w-5 h-5 mr-2" />
                         Back to Menu
                     </button>
@@ -63,10 +74,10 @@ const SideBar = ({ isOpen, onModeChange }) => {
             // Default view: the main menu list
             contentToRender = (
                 <ul 
-                className="
-                mt-12 relative w-full h-[87%] overflow-y-scroll 
-                [&::-webkit-scrollbar]:hidden 
-            ">
+                    className="
+                        mt-5 relative w-full h-[87%] overflow-y-scroll 
+                        [&::-webkit-scrollbar]:hidden 
+                ">
                     {/* eslint-disable-next-line no-unused-vars */}
                     {menuItems.map(({label, component, Icon}) => {
                         const isDropdown = DROP_DOWN_IDS.includes(label);
@@ -130,7 +141,9 @@ const SideBar = ({ isOpen, onModeChange }) => {
                 transition-all duration-300 overflow-hidden 
                 ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
             `}> 
-                {contentToRender}
+                <div className="mt-13 h-[87%]">
+                    {contentToRender}
+                </div>
             </div>
         );
     }, [isOpen, activeViewId, dropdownOpenId, onModeChange, mode]);

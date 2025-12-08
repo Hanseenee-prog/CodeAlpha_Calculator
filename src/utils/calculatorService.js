@@ -124,12 +124,12 @@ const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) 
     return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };
 }
 
-export const handleCalculationAction = (actionType, expression, isResultDisplayed, lastAns, cursorPosition, value) => {
+export const handleCalculationAction = (actionType, expression, isResultDisplayed, lastAns, cursorPosition, resultValue, value) => {
     let result = {
         newExpr: expression,
         newCursorPos: cursorPosition,
         isResultDisplayed: isResultDisplayed,
-        resultValue: 0,
+        resultValue: resultValue,
         lastAns: lastAns,
     }
 
