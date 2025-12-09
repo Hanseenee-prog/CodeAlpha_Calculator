@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { handleButtonClick } from './buttonHandler';
-import { handleCalculationAction } from "./calculatorService";
+import { handleButtonClick } from '../buttonHandler';
+import { handleCalculationAction } from "../services/calculatorService";
 import { useKeyboardSupport } from "./useKeyboardSupport";
-import { useAppContext } from "../components/Contexts/AppContext";
+import { useAppContext } from "../../components/Contexts/AppContext";
 
 export const useCalcLogic = () => {
     const { 

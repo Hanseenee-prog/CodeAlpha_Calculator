@@ -5,7 +5,7 @@ import SideBar from './components/Sidebar/SideBar';
 import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/Keypad/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
-import { useCalcLogic } from './utils/useCalcLogic';
+import { useCalcLogic } from './utils/hooks/useCalcLogic';
 import delay from './utils/delay';
 import { useAppContext } from './components/Contexts/AppContext';
 
