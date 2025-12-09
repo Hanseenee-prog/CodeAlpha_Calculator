@@ -49,6 +49,10 @@ export const useKeyboardSupport = (handleAction, moveCursor) => {
                 else if (e.key === 'a') value = 'Ans'; // If 'a' is pressed, input 'Ans'
                 else value = e.key;
             }
+            else return;
+
+            // Treat Tab and CapsLock as empty input
+            if (e.key === 'Tab' || e.key === 'CapsLock') value = '';
 
             if (actionType) handleAction(actionType, value);
         }
