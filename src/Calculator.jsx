@@ -6,7 +6,7 @@ import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/Keypad/KeyPadGrid';
 import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
 import { useCalcLogic } from './utils/hooks/useCalcLogic';
-import delay from './utils/delay';
+import delay from './utils/helpers/delay';
 import { useAppContext } from './components/Contexts/AppContext';
 
 function Calculator() {

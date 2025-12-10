@@ -1,5 +1,5 @@
 import { evaluate } from "mathjs";
-import { formatResult } from "./formatResult";
+import { formatResult } from "../../helpers/formatResult";
 
 export const handleCalculate = (expression, lastAns, result) => {
     try {

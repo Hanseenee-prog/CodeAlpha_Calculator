@@ -1,4 +1,4 @@
-import { getCurrentNumberAfterCursor } from '../getCurrentNumberAfterCursor';
+import { getCurrentNumberAfterCursor } from '../helpers/getCurrentNumberAfterCursor';
 
 export const validateInput = (expression, cursorPosition, newText) => {
     const { currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);

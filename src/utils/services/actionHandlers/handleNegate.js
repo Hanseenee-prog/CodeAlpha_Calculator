@@ -1,4 +1,4 @@
-import { getCurrentNumberAfterCursor } from './../../getCurrentNumberAfterCursor';
+import { getCurrentNumberAfterCursor } from '../../helpers/getCurrentNumberAfterCursor';
 
 export const handleNegate = (expression, cursorPosition, result) => {
     const { startIndex, endIndex, currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);

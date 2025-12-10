@@ -1,5 +1,5 @@
-import { getCurrentNumberAfterCursor } from './../../getCurrentNumberAfterCursor';
-import { formatResult } from './formatResult';
+import { getCurrentNumberAfterCursor } from '../../helpers/getCurrentNumberAfterCursor';
+import { formatResult } from '../../helpers/formatResult';
 
 export const handleReciprocal = (expression, cursorPosition, lastAns, result) => {
     const { startIndex, endIndex, currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);
