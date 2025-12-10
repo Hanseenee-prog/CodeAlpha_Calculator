@@ -26,23 +26,25 @@ export const handleCalculate = (expression, lastAns, result) => {
         const formattedString = formatResult(evaluatedResult); 
 
         // Success path
-        result.resultValue = formattedString; // Use formatted string for display
-        result.newExpr = formattedString;
-        result.lastAns = evaluatedResult; // Store the original, high-precision number for 'Ans' use
-        result.newCursorPos = result.newExpr.length;
-        result.isResultDisplayed = true;
-
-        result.history = {
-            expr: expr,
-            evaluatedResult: String(evaluatedResult)
+        return {
+            ...result, 
+            resultValue: formattedString,        
+            newExpr: formattedString,            
+            lastAns: evaluatedResult,            
+            newCursorPos: formattedString.length,
+            isResultDisplayed: true,             
+            history: {                           
+                expr: expr,
+                evaluatedResult: String(evaluatedResult)
+            }
+        };
+    } 
+    catch {
+        return {
+            ...result,
+            resultValue: 'Error',
+            newExpr: 'Error',
+            isResultDisplayed: true,
         }
-
-        return result;
-    } catch (err) {
-        result.resultValue = 'Error';
-        result.newExpr = 'Error';
-        result.isResultDisplayed = true;
-        console.log('Error', err);
-        return result;
     }
 }

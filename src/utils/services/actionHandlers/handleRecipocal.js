@@ -20,10 +20,12 @@ export const handleReciprocal = (expression, cursorPosition, lastAns, result) =>
 
         // Check current number value for zero/NaN
         if (isNaN(numberToReciprocate) || numberToReciprocate === 0) {
-            result.newExpr = 'Error(Cannot divide by zero)';
-            result.newCursorPos = result.newExpr.length;
-            result.isResultDisplayed = true;
-            return result;
+            return {
+                ...result,
+                newExpr: 'Error(Cannot divide by zero)',
+                newCursorPos: 'Error(Cannot divide by zero)'.length,
+                isResultDisplayed: true
+            }
         }
         
         // The tolerance for floating point comparison
@@ -34,14 +36,16 @@ export const handleReciprocal = (expression, cursorPosition, lastAns, result) =>
         // Check if the current number (before formatting) is close to 1 / lastAns
         // This means the user is pressing reciprocal a second time on a reciprocated result.
         if (Math.abs(numberToReciprocate - (1 / lastAns)) < tolerance) {
-                // Revert to the high-precision original number (lastAns)
-                const revertedNumber = formatResult(lastAns);
-                
-                result.newExpr = beforeNumber + revertedNumber + afterNumber;
-                result.newCursorPos = (beforeNumber + revertedNumber).length;
-                result.isResultDisplayed = false;
-                // Crucially, lastAns is NOT updated, preserving the original number for future calculations
-                return result;
+            // Revert to the high-precision original number (lastAns)
+            const revertedNumber = formatResult(lastAns);
+
+            // Crucially, lastAns is NOT updated, preserving the original number for future calculations
+            return {
+                ...result,
+                newExpr: beforeNumber + revertedNumber + afterNumber,
+                newCursorPos: (beforeNumber + revertedNumber).length,
+                isResultDisplayed: false
+            }
         }
     
         // Get the reciprocal of the number (raw number)
@@ -64,9 +68,10 @@ export const handleReciprocal = (expression, cursorPosition, lastAns, result) =>
         result.isResultDisplayed = true;
     }
 
-    result.newExpr = newExpr;
-    result.newCursorPos = newCursorPos;
-    result.isResultDisplayed = false; // It's an insertion, not a final result display
-    return result;
-
+    return {
+        ...result,
+        newExpr,
+        newCursorPos,
+        isResultDisplayed: false, // It's an insertion, not a final result display
+    }
 }
