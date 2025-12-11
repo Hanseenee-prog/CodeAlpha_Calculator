@@ -1,6 +1,10 @@
 import React from "react";
+import { useAppContext } from "../Contexts/AppContext";
 
 const CalculatorButton = React.memo(({ button, onButtonClick, isAccent, isMemory }) => {
+    const { memory } = useAppContext();
+    const { isMemoryActive } = memory;
+    
     const baseStyle = `
         w-full grid place-items-center 
         font-semibold cursor-pointer shadow-md
@@ -10,15 +14,20 @@ const CalculatorButton = React.memo(({ button, onButtonClick, isAccent, isMemory
         ? 'bg-blue-300 text-blue-900 hover:bg-blue-400 p-1.5 rounded-[10px]'
         : (
             isMemory 
-            ? 'bg-gray-100 text-blue-900 hover:bg-blue-400 p-0.7 rounded-[8px]'
+            ? (`bg-gray-100 p-0.7 rounded-[8px] font-extrabold
+                ${(!isMemoryActive && (button.label === 'MR' || button.label === 'MC')) 
+                    ? 'text-black disabled:cursor-not-allowed opacity-50' : 'text-blue-900 hover:bg-blue-400'}
+                `)
             : 'bg-white text-gray-800 hover:bg-gray-100 text-xl p-1.5 rounded-[10px]'
         );
 
     return ( 
         <button 
             className={`${baseStyle} ${colorStyle}`}
-            onClick={() => onButtonClick(button)}>
-                {button.label}
+            onClick={() => onButtonClick(button)}
+            disabled={!isMemoryActive && (button.label === 'MR' || button.label === 'MC')}    
+        >
+            {button.label}
         </button>
     );
 })

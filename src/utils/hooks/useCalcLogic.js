@@ -9,7 +9,7 @@ export const useCalcLogic = () => {
         expression, setExpression,
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
-        addHistoryEntry // Re-add the history function
+        addHistoryEntry, memory
     } = useAppContext();
     
     const [result, setResult] = useState('0');
@@ -58,41 +58,81 @@ export const useCalcLogic = () => {
     }, [setCursorPosition]);
 
     const handleAction = useCallback((actionType, value) => {
-        // Get current state from ref
-        const currentState = stateRef.current;
+        switch (actionType) {
+            case 'memory-store': {
+                const valueToStore = parseFloat(stateRef.current.expression);
+                memory.handleStore(valueToStore); 
+                break;
+            }
 
-        // Get the updates to the state
-        const updates = handleCalculationAction(
-            actionType,
-            currentState.expression,
-            currentState.isResultDisplayed,
-            currentState.lastAns,
-            currentState.cursorPosition,
-            currentState.result,
-            value
-        )
+            case 'memory-add': {
+                const valueToAdd = parseFloat(stateRef.current.expression);
+                memory.handleAdd(valueToAdd);
+                console.log('added')
+                break;
+            }
 
-        // Check if the updates object returned history data
-        if (updates.history && Object.keys(updates.history).length > 0) {
-            addHistoryEntry(updates.history.expr, updates.history.evaluatedResult);
+            case 'memory-subtract': {
+                const valueToSubtract = parseFloat(stateRef.current.expression);
+                memory.handleSubtract(valueToSubtract);
+                console.log('subtracted')
+                break;
+            }
+
+            case 'memory-clear': 
+                memory.handleClear();
+                console.log('cleared')
+                return;
+
+            case 'memory-recall': {
+                const recalledValue = memory.handleRecall();
+
+                setExpression(recalledValue.toString());
+                setCursorPosition(recalledValue.toString().length);
+                setIsResultDisplayed(false);
+                break;
+            }
+
+            default: {
+                // Get current state from ref
+                const currentState = stateRef.current;
+
+                // Get the updates to the state
+                const updates = handleCalculationAction(
+                    actionType,
+                    currentState.expression,
+                    currentState.isResultDisplayed,
+                    currentState.lastAns,
+                    currentState.cursorPosition,
+                    currentState.result,
+                    value
+                )
+
+                // Check if the updates object returned history data
+                if (updates.history && Object.keys(updates.history).length > 0) {
+                    addHistoryEntry(updates.history.expr, updates.history.evaluatedResult);
+                }
+
+                // Update Ref immediately 
+                stateRef.current = {
+                    expression: updates.newExpr,
+                    cursorPosition: updates.newCursorPos,
+                    lastAns: updates.lastAns,
+                    isResultDisplayed: updates.isResultDisplayed,
+                    resultValue: updates.resultValue
+                }
+
+                // Update other states
+                setExpression(stateRef.current.expression);
+                setCursorPosition(stateRef.current.cursorPosition);
+                setLastAns(stateRef.current.lastAns);
+                setResult(stateRef.current.resultValue);
+                setIsResultDisplayed(stateRef.current.isResultDisplayed);
+
+                break;
+            }
         }
-
-        // Update Ref immediately 
-        stateRef.current = {
-            expression: updates.newExpr,
-            cursorPosition: updates.newCursorPos,
-            lastAns: updates.lastAns,
-            isResultDisplayed: updates.isResultDisplayed,
-            resultValue: updates.resultValue
-        }
-
-        // Update other states
-        setExpression(stateRef.current.expression);
-        setCursorPosition(stateRef.current.cursorPosition);
-        setLastAns(stateRef.current.lastAns);
-        setResult(stateRef.current.resultValue);
-        setIsResultDisplayed(stateRef.current.isResultDisplayed);
-    }, [setCursorPosition, setIsResultDisplayed, setExpression, addHistoryEntry]);
+    }, [setCursorPosition, setIsResultDisplayed, setExpression, addHistoryEntry, memory]);
 
     useKeyboardSupport(handleAction, moveCursor);
 

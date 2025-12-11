@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useMemo, useCallback } from 'react';
 
 const AppContext = createContext();
 
@@ -12,6 +12,7 @@ export const AppProvider = ({ children }) => {
     const [expression, setExpression] = useState('0');
     const [cursorPosition, setCursorPosition] = useState(1);
     const [isResultDisplayed, setIsResultDisplayed] = useState(false);
+    const [memoryLog, setMemoryLog] = useState(() => JSON.parse(localStorage.getItem('calc-memory-log') || '[]'));
 
     // Get saved history from local storage
     const [history, setHistory] = useState(() => {
@@ -28,6 +29,70 @@ export const AppProvider = ({ children }) => {
         setHistory(prevHistory => [newHistory, ...prevHistory]);
     }
 
+    const isMemoryActive = useMemo(() => (memoryLog.length > 0 || memoryLog[0] === 0), [memoryLog]);
+
+    // --- Action Handlers (Memory) ---
+    // To store a value in the memory
+    const handleStore = useCallback((valueToStore) => {
+        const value = parseFloat(valueToStore);
+
+        if (valueToStore === 0) return;
+
+        setMemoryLog(prevLog => [value, ...prevLog]);
+    }, []);
+
+    // To add to Memory
+    const handleAdd = useCallback((valueToAdd) => {
+        if (memoryLog.length === '0') return;
+        if (valueToAdd === 0) return;
+
+        const current = parseFloat(valueToAdd);
+        const latestValue = (memoryLog[0] || 0);
+
+        const updated = latestValue + current;
+
+        setMemoryLog(prevLog => {
+            const updatedArr = [...prevLog];
+            updatedArr[0] = updated;
+            return updatedArr;
+        })
+    }, [memoryLog]);
+
+    // To subtract from memory
+    const handleSubtract = useCallback((valueToSubtract) => {
+        if (memoryLog.length === '0') return;
+        if (valueToSubtract === 0) return;
+
+        const current = parseFloat(valueToSubtract);
+        const latestValue = (memoryLog[0] || 0);
+
+        const updated = latestValue - current;
+
+        setMemoryLog(prevLog => {
+            const updatedArr = [...prevLog];
+            updatedArr[0] = updated;
+            return updatedArr;
+        })
+    }, [memoryLog]);
+
+    // To clear the memory
+    const handleClear = useCallback(() => {
+        setMemoryLog([]);
+    }, []);
+
+    // To recall memory value
+    const handleRecall = useCallback(() => {
+        if (memoryLog.length === '0') return;
+
+        const latestValue = memoryLog[0];
+        return latestValue;
+    }, [memoryLog]);
+
+    const memory = {
+        memoryLog, isMemoryActive,
+        handleStore, handleAdd, handleSubtract, handleClear, handleRecall
+    }
+
     const value = {
         mode, setMode,
         isOpen, setIsOpen,
@@ -35,7 +100,8 @@ export const AppProvider = ({ children }) => {
         expression, setExpression,
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
-        history, setHistory, addHistoryEntry
+        history, setHistory, addHistoryEntry,
+        memory
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

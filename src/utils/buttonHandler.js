@@ -47,6 +47,26 @@ export const handleButtonClick = (button, state, actions) => {
             handleAction('clear');
             break;
 
+        case 'memory-store':
+            handleAction('memory-store');
+            break;
+
+        case 'memory-add':
+            handleAction('memory-add');
+            break;
+
+        case 'memory-subtract': 
+            handleAction('memory-subtract');
+            break;
+
+        case 'memory-clear':
+            handleAction('memory-clear');
+            break;
+
+        case 'memory-recall':
+            handleAction('memory-recall');
+            break;
+
         default:
             console.warn(`Unknown button type: ${type}`);
     }
