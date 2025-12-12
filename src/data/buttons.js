@@ -58,15 +58,15 @@ export const scientificButtons = [
   { label: 'log', type: 'function', func: 'log', style: 'scientific' }, 
     
   // Row 3 - Power functions 
-  { label: 'x²', type: 'function', func: 'square', style: 'scientific' }, 
-  { label: 'x³', type: 'function', func: 'cube', style: 'scientific' }, 
+  { label: 'x²', type: 'function', func: '²', style: 'scientific' }, 
+  { label: 'x³', type: 'function', func: '³', style: 'scientific' }, 
   { label: 'xʸ', value: '^', type: 'operator', style: 'scientific' }, 
   { label: 'eˣ', type: 'function', func: 'exp', style: 'scientific' }, 
   { label: '10ˣ', type: 'function', func: 'pow10', style: 'scientific' },
 
   // Row 4 - Roots and constants 
-  { label: '√', type: 'function', func: 'sqrt', style: 'scientific' }, 
-  { label: '∛', type: 'function', func: 'cbrt', style: 'scientific' }, 
+  { label: '√', type: 'function', func: '√', style: 'scientific' }, 
+  { label: '∛', type: 'function', func: '∛', style: 'scientific' }, 
   { label: 'ʸ√x', type: 'function', func: 'nthroot', style: 'scientific' }, 
   { label: '|x|', type: 'function', func: 'abs', style: 'scientific' }, 
   { label: 'π', value: Math.PI.toString(), type: 'constant', style: 'scientific' }, 

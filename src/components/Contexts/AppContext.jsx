@@ -11,6 +11,7 @@ export const AppProvider = ({ children }) => {
     const [theme, setTheme] = useState('Light');
     const [expression, setExpression] = useState('0');
     const [cursorPosition, setCursorPosition] = useState(1);
+    const [cursorMode, setCursorMode] = useState('normal'); // 'normal' or 'super'
     const [isResultDisplayed, setIsResultDisplayed] = useState(false);
     const [memoryLog, setMemoryLog] = useState(() => JSON.parse(localStorage.getItem('calc-memory-log') || '[]'));
 
@@ -99,6 +100,7 @@ export const AppProvider = ({ children }) => {
         theme, setTheme,
         expression, setExpression,
         cursorPosition, setCursorPosition,
+        cursorMode, setCursorMode,
         isResultDisplayed, setIsResultDisplayed,
         history, setHistory, addHistoryEntry,
         memory

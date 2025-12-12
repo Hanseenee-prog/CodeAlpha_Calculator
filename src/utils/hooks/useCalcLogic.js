@@ -9,7 +9,8 @@ export const useCalcLogic = () => {
         expression, setExpression,
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
-        addHistoryEntry, memory
+        addHistoryEntry, memory, 
+        cursorMode, setCursorMode
     } = useAppContext();
     
     const [result, setResult] = useState('0');
@@ -21,9 +22,10 @@ export const useCalcLogic = () => {
         result: '0',
         cursorPosition: 1,
         lastAns: '0',
-        isResultDisplayed: false
-    })
-
+        isResultDisplayed: false,
+        cursorMode: 'normal'
+    });
+    
     useEffect(() => {
         stateRef.current = {
             expression,
@@ -31,8 +33,22 @@ export const useCalcLogic = () => {
             cursorPosition,
             lastAns,
             isResultDisplayed,
+            cursorMode,
         }
-    }, [expression, result, cursorPosition, lastAns, isResultDisplayed])
+    }, [expression, result, cursorPosition, lastAns, isResultDisplayed, cursorMode]);
+
+    const updateCursorMode = useCallback((pos, expr) => {
+        const superscriptRegex = /[⁰¹²³⁴⁵⁶⁷⁸⁹]/;
+
+        const beforeChar = expr.charAt(pos - 1);
+        const afterChar = expr.charAt(pos);
+
+        if (superscriptRegex.test(beforeChar) || superscriptRegex.test(afterChar)) {
+            setCursorMode('superscript');
+        } else {
+            setCursorMode('normal');
+        }
+    }, [setCursorMode]);
 
     // Function to move the cursor
     const moveCursor = useCallback(direction => {
@@ -47,15 +63,18 @@ export const useCalcLogic = () => {
                 newPosition = Math.max(0, prevPosition - 1); // Cursor never goes beyond 0
                 if (prevPosition >= 3 && expr.substring(prevPosition - 3, prevPosition) === 'Ans') return prevPosition - 3;
             }
+
             else if (direction === 'right') {
                 newPosition = Math.min(expr.length, prevPosition + 1); // Cursor never goes beyond expression's length
                 if (expr.substring(prevPosition, prevPosition + 3) === 'Ans') return prevPosition + 3;
             }
 
+            updateCursorMode(newPosition, expr);
+
             stateRef.current.cursorPosition = newPosition;
             return newPosition;
         })
-    }, [setCursorPosition]);
+    }, [setCursorPosition, updateCursorMode]);
 
     const handleAction = useCallback((actionType, value) => {
         switch (actionType) {
@@ -105,7 +124,8 @@ export const useCalcLogic = () => {
                     currentState.lastAns,
                     currentState.cursorPosition,
                     currentState.result,
-                    value
+                    value,
+                    currentState.cursorMode
                 )
 
                 // Check if the updates object returned history data
@@ -119,7 +139,8 @@ export const useCalcLogic = () => {
                     cursorPosition: updates.newCursorPos,
                     lastAns: updates.lastAns,
                     isResultDisplayed: updates.isResultDisplayed,
-                    resultValue: updates.resultValue
+                    resultValue: updates.resultValue,
+                    cursorMode: updates.cursorMode
                 }
 
                 // Update other states

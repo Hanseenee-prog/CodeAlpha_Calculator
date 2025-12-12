@@ -5,7 +5,17 @@ export const handleButtonClick = (button, state, actions) => {
         handleAction, 
     } = actions;
 
-    const { type, value, /*label, func*/ } = button;
+    const { type, value, label, func } = button;
+
+    const trigRegex = /(tan|cos|sin|ln|log)/;
+    const powerRegex = /(³|²)/;
+    const rootAndConstantRegex = /(√|∛|π)/;
+
+    let valueToInsert;
+
+    if (trigRegex.test(func) || rootAndConstantRegex.test(func)) valueToInsert = `${func}(`; 
+    else if (powerRegex.test(func)) valueToInsert = func; 
+    else valueToInsert = ''; 
 
     switch (type) {
         case 'number':
@@ -14,10 +24,14 @@ export const handleButtonClick = (button, state, actions) => {
         case 'percent':
         case 'sqrt':
         case 'answer':
-            // If expression is zero, replace it with ans
-            // Else add it to the current expression
+        case 'bracket':
+        case 'constant':
             handleAction('insert_text', value);
             break; 
+
+        case 'function': 
+            handleAction('insert_text', valueToInsert); 
+            break;
 
         case 'equals':
             handleAction('calculate')
@@ -48,23 +62,11 @@ export const handleButtonClick = (button, state, actions) => {
             break;
 
         case 'memory-store':
-            handleAction('memory-store');
-            break;
-
         case 'memory-add':
-            handleAction('memory-add');
-            break;
-
-        case 'memory-subtract': 
-            handleAction('memory-subtract');
-            break;
-
+        case 'memory-subtract':
         case 'memory-clear':
-            handleAction('memory-clear');
-            break;
-
         case 'memory-recall':
-            handleAction('memory-recall');
+            handleAction(type);
             break;
 
         default:

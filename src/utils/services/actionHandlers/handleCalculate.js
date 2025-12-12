@@ -1,19 +1,20 @@
 import { evaluate } from "mathjs";
 import { formatResult } from "../../helpers/formatResult";
+import { prepareExpressionForEvaluation } from "../../hooks/prepareExpressionForEvaluation";
 
 export const handleCalculate = (expression, lastAns, result) => {
     try {
         // Replace 'Ans' with actual value before evaluation
-        let expr = expression.replace(/Ans/g, lastAns.toString());
+        let expr = prepareExpressionForEvaluation(expression, lastAns);
 
-        // Replace '√' with sqrt(text) until the next operator
-        if (expr.includes('√')) {
-            // This pattern covers basic cases like √25, √3.14, or √(9)
-            expr = expr.replace(/√(\d+(\.\d+)?|\((.*?)\))/g, 'sqrt($1)');
+        // // Replace '√' with sqrt(text) until the next operator
+        // if (expr.includes('√')) {
+        //     // This pattern covers basic cases like √25, √3.14, or √(9)
+        //     expr = expr.replace(/√(\d+(\.\d+)?|\((.*?)\))/g, 'sqrt($1)');
             
-            // Fallback for cases where maybe just a single character follows √
-            expr = expr.replace(/√([^+\-*/\x^])+/g, 'sqrt($1)');
-        }
+        //     // Fallback for cases where maybe just a single character follows √
+        //     expr = expr.replace(/√([^+\-*/\x^])+/g, 'sqrt($1)');
+        // }
 
         let evaluatedResult = evaluate(expr);
 
