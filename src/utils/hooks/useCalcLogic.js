@@ -10,7 +10,6 @@ export const useCalcLogic = () => {
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
         addHistoryEntry, memory, 
-        cursorMode, setCursorMode
     } = useAppContext();
     
     const [result, setResult] = useState('0');
@@ -23,7 +22,6 @@ export const useCalcLogic = () => {
         cursorPosition: 1,
         lastAns: '0',
         isResultDisplayed: false,
-        cursorMode: 'normal'
     });
     
     useEffect(() => {
@@ -33,22 +31,8 @@ export const useCalcLogic = () => {
             cursorPosition,
             lastAns,
             isResultDisplayed,
-            cursorMode,
         }
-    }, [expression, result, cursorPosition, lastAns, isResultDisplayed, cursorMode]);
-
-    const updateCursorMode = useCallback((pos, expr) => {
-        const superscriptRegex = /[⁰¹²³⁴⁵⁶⁷⁸⁹]/;
-
-        const beforeChar = expr.charAt(pos - 1);
-        const afterChar = expr.charAt(pos);
-
-        if (superscriptRegex.test(beforeChar) || superscriptRegex.test(afterChar)) {
-            setCursorMode('superscript');
-        } else {
-            setCursorMode('normal');
-        }
-    }, [setCursorMode]);
+    }, [expression, result, cursorPosition, lastAns, isResultDisplayed]);
 
     // Function to move the cursor
     const moveCursor = useCallback(direction => {
@@ -69,12 +53,10 @@ export const useCalcLogic = () => {
                 if (expr.substring(prevPosition, prevPosition + 3) === 'Ans') return prevPosition + 3;
             }
 
-            updateCursorMode(newPosition, expr);
-
             stateRef.current.cursorPosition = newPosition;
             return newPosition;
         })
-    }, [setCursorPosition, updateCursorMode]);
+    }, [setCursorPosition]);
 
     const handleAction = useCallback((actionType, value) => {
         switch (actionType) {
@@ -125,7 +107,6 @@ export const useCalcLogic = () => {
                     currentState.cursorPosition,
                     currentState.result,
                     value,
-                    currentState.cursorMode
                 )
 
                 // Check if the updates object returned history data

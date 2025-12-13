@@ -60,16 +60,16 @@ export const scientificButtons = [
   // Row 3 - Power functions 
   { label: 'x²', type: 'function', func: '²', style: 'scientific' }, 
   { label: 'x³', type: 'function', func: '³', style: 'scientific' }, 
-  { label: 'xʸ', value: '^', type: 'operator', style: 'scientific' }, 
+  { label: 'xʸ', func: '^', type: 'function', style: 'scientific' }, 
   { label: 'eˣ', type: 'function', func: 'exp', style: 'scientific' }, 
-  { label: '10ˣ', type: 'function', func: 'pow10', style: 'scientific' },
+  { label: '10ˣ', type: 'function', func: '10^(', style: 'scientific' },
 
   // Row 4 - Roots and constants 
   { label: '√', type: 'function', func: '√', style: 'scientific' }, 
   { label: '∛', type: 'function', func: '∛', style: 'scientific' }, 
-  { label: 'ʸ√x', type: 'function', func: 'nthroot', style: 'scientific' }, 
+  { label: 'ʸ√x', type: 'function', func: 'ʸ√', style: 'scientific' }, 
   { label: '|x|', type: 'function', func: 'abs', style: 'scientific' }, 
-  { label: 'π', value: Math.PI.toString(), type: 'constant', style: 'scientific' }, 
+  { label: 'π', value: 'π', type: 'constant', style: 'scientific' }, 
     
   // Row 5 - Memory functions 
   { label: 'MC', type: 'memory-clear', style: 'memory' }, 
@@ -93,7 +93,7 @@ export const scientificButtons = [
   { label: '×', value: '*', type: 'operator', style: 'accent' }, 
   
   // Row 8
-  { label: 'n!', type: 'function', func: 'factorial', style: 'scientific' }, 
+  { label: 'n!', type: 'function', func: '!', style: 'scientific' }, 
   { label: '4', value: '4', type: 'number', style: 'number' }, 
   { label: '5', value: '5', type: 'number', style: 'number' }, 
   { label: '6', value: '6', type: 'number', style: 'number' }, 

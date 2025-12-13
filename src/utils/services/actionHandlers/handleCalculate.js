@@ -4,17 +4,7 @@ import { prepareExpressionForEvaluation } from "../../hooks/prepareExpressionFor
 
 export const handleCalculate = (expression, lastAns, result) => {
     try {
-        // Replace 'Ans' with actual value before evaluation
         let expr = prepareExpressionForEvaluation(expression, lastAns);
-
-        // // Replace '√' with sqrt(text) until the next operator
-        // if (expr.includes('√')) {
-        //     // This pattern covers basic cases like √25, √3.14, or √(9)
-        //     expr = expr.replace(/√(\d+(\.\d+)?|\((.*?)\))/g, 'sqrt($1)');
-            
-        //     // Fallback for cases where maybe just a single character follows √
-        //     expr = expr.replace(/√([^+\-*/\x^])+/g, 'sqrt($1)');
-        // }
 
         let evaluatedResult = evaluate(expr);
 

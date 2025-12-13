@@ -8,7 +8,7 @@ export const validateInput = (expression, cursorPosition, newText) => {
         isDecimal: newText === '.',
         isPercent: newText === '%',
         isOperator: /[+\-*/\x]/.test(newText),
-        isFunc: /(tan|cos|sin|ln|log|√|∛)/.test(newText),
+        isFunc: /(tan|cos|sin|ln|log|√|∛|π|abs|(|)|ʸ√)/.test(newText),
         isBracket: /[()]/.test(newText),
 
         hasPercent: currentNumber.includes('%'),

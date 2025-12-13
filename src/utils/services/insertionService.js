@@ -1,18 +1,6 @@
 import { validateInput } from './validationService';
 
-export const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed, cursorMode) => {
-    const superscriptMap = {
-        '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-        '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
-    };
-
-    if (cursorMode === 'superscript' && /^[0-9]$/.test(newText)) {
-        newText = newText
-            .split("")
-            .map(char => superscriptMap[char] || char)
-            .join("");
-    }   
-    
+export const insertAtCursor = (expression, cursorPosition, newText, isResultDisplayed) => {
     let newExpr = expression;
     let newCursorPos = cursorPosition;
     let updatedIsResultDisplayed = isResultDisplayed;
