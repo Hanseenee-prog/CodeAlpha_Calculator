@@ -7,6 +7,7 @@ import { useAppContext } from "../../components/Contexts/AppContext";
 export const useCalcLogic = () => {
     const { 
         expression, setExpression,
+        angleMode,
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
         addHistoryEntry, memory, 
@@ -22,6 +23,7 @@ export const useCalcLogic = () => {
         cursorPosition: 1,
         lastAns: '0',
         isResultDisplayed: false,
+        angleMode: 'radians'
     });
     
     useEffect(() => {
@@ -31,8 +33,9 @@ export const useCalcLogic = () => {
             cursorPosition,
             lastAns,
             isResultDisplayed,
+            angleMode
         }
-    }, [expression, result, cursorPosition, lastAns, isResultDisplayed]);
+    }, [expression, result, cursorPosition, lastAns, isResultDisplayed, angleMode]);
 
     // Function to move the cursor
     const moveCursor = useCallback(direction => {
@@ -106,6 +109,7 @@ export const useCalcLogic = () => {
                     currentState.lastAns,
                     currentState.cursorPosition,
                     currentState.result,
+                    currentState.angleMode,
                     value,
                 )
 

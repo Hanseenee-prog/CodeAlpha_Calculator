@@ -1,8 +1,10 @@
 import { useEffect, useRef, useCallback } from "react";
 import SoundRecorder from "./SoundRecorder";
+import { useAppContext } from "./Contexts/AppContext";
 
 const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
     const displayRef = useRef(null);
+    const { mode, angleMode, setAngleMode } = useAppContext();
 
     useEffect(() => {
         // Focus display when expression updates
@@ -38,12 +40,31 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
                     <span>{result}</span>
                 </div>
 
+                {(mode === 'Scientific') && (
+                    <div className="cursor-pointer flex gap-1 absolute bottom-0">
+                        <button 
+                            className={`
+                                cursor-pointer p-1 rounded-lg
+                                ${angleMode === 'degrees' ? 'bg-blue-200' : ''}
+                            `}
+                            onClick={() => setAngleMode('degrees')}
+                        >DEG</button>
+                        <button
+                            className={`
+                                cursor-pointer p-1 rounded-lg
+                                ${angleMode === 'radians' ? 'bg-blue-200' : ''}
+                            `}
+                            onClick={() => setAngleMode('radians')}
+                        >RAD</button>
+                    </div>
+                )}
+
                 <SoundRecorder 
                     onTranscript={onTranscript}
                 />
             </div>
         );
-    },[onTranscript, partAfterCursor, partBeforeCursor, result]); // Update dependencies to use the parts
+    },[onTranscript, partAfterCursor, partBeforeCursor, result, setAngleMode, mode, angleMode]); // Update dependencies to use the parts
 
     return displayContent();
 }

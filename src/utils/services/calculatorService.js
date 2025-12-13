@@ -4,7 +4,7 @@ import { handleReciprocal } from './actionHandlers/handleRecipocal';
 import { handleNegate } from './actionHandlers/handleNegate';
 import { handleCalculate } from './actionHandlers/handleCalculate';
 
-export const handleCalculationAction = (actionType, expression, isResultDisplayed, lastAns, cursorPosition, resultValue, value, cursorMode) => {
+export const handleCalculationAction = (actionType, expression, isResultDisplayed, lastAns, cursorPosition, resultValue, angleMode, value) => {
     let result = {
         newExpr: expression,
         newCursorPos: cursorPosition,
@@ -16,7 +16,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
     switch (actionType) {
         case 'insert_text': {
-            let updates = insertAtCursor(expression, cursorPosition, value, isResultDisplayed, cursorMode);
+            let updates = insertAtCursor(expression, cursorPosition, value, isResultDisplayed);
 
             result.newExpr = updates.newExpr;
             result.newCursorPos = updates.newCursorPos;
@@ -34,7 +34,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
             return handleNegate(expression, cursorPosition, result);
 
         case 'calculate':
-            return handleCalculate(expression, lastAns, result);
+            return handleCalculate(expression, lastAns, result, angleMode);
 
         case 'clear':
             result.newExpr ='0';
