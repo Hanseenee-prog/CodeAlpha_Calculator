@@ -1,6 +1,6 @@
 import { create, all } from "mathjs";
 import { formatResult } from "../../helpers/formatResult";
-import { prepareExpressionForEvaluation } from "../../hooks/prepareExpressionForEvaluation";
+import { prepareExpressionForEvaluation } from "../../helpers/prepareExpressionForEvaluation";
 
 const math = create(all);
 
@@ -38,7 +38,7 @@ export const handleCalculate = (expression, lastAns, result, angleMode) => {
             newCursorPos: formattedString.length,
             isResultDisplayed: true,             
             history: {                           
-                expr: expr,
+                expr: expression,
                 evaluatedResult: String(evaluatedResult)
             }
         };

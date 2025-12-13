@@ -37,7 +37,7 @@ export const AppProvider = ({ children }) => {
     const handleStore = useCallback((valueToStore) => {
         const value = parseFloat(valueToStore);
 
-        if (valueToStore === 0) return;
+        if (valueToStore === 0 || isNaN(valueToStore)) return;
 
         setMemoryLog(prevLog => [value, ...prevLog]);
     }, []);
