@@ -101,32 +101,24 @@ const SoundRecorder = ({ onTranscript }) => {
     }
 
     return ( 
-        <div className={`
-            absolute bottom-1 right-1 w-16 h-12
-            rounded-full cursor-pointer 
+        <button className={`
+            absolute bottom-0 left-3 h-10
+            flex flex-row items-center gap-1
         `}>
             <span 
                 onClick={isListening ? endVoiceRecorder : startVoiceRecorder}
                 className={`
-                    cursor-pointer w-full h-full
+                    cursor-pointer h-full rounded-2xl w-10
                     flex flex-row items-center justify-center
-                    rounded-full
-                    ${ isListening ? 'bg-red-500' : 'bg-blue-300 hover:scale-110' }
+                    ${ isListening ? 'bg-red-500' : 'bg-blue-300 hover:scale-105' }
                 `}
             >
-                { isListening && (
-                    <span className="
-                        relative top-0 left-0 w-full h-full
-                    ">Listening...</span> 
-                    )
-                }
-
                 <svg 
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24" fill="none" 
                     stroke="currentColor" strokeWidth="2" 
                     strokeLinecap="round" strokeLinejoin="round"
-                    className={`w-6 h-6`}
+                    className={`w-5 h-5`}
                     >
                     <rect x="9" y="3" width="6" height="10" rx="3" />
                     <path d="M19 11a7 7 0 0 1-14 0" />
@@ -134,7 +126,16 @@ const SoundRecorder = ({ onTranscript }) => {
                     <path d="M8 22h8" />
                 </svg>
             </span>
-        </div>
+
+            { isListening && (
+                <span className={`
+                    bg-red-500 rounded-2xl h-full text-[14px] grid place-items-center pl-1 pr-1
+                    transition-all duration-500 ease-in-out overflow-hidden
+                    ${isListening ? 'w-16' : 'w-0'}
+                `}>Listening...</span> 
+                )
+            }
+        </button>
     );
 }
  

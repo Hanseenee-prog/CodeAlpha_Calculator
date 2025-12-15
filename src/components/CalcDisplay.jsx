@@ -1,3 +1,4 @@
+import './../index.css';
 import { useEffect, useRef, useCallback } from "react";
 import SoundRecorder from "./SoundRecorder";
 import { useAppContext } from "./Contexts/AppContext";
@@ -24,37 +25,49 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
                 flex flex-row items-stretch
             ">
                 <div 
-                    className="pl-3"
+                    className="pl-3 pr-3 w-full"
                     ref={displayRef}
-                    // tabIndex={0} 
                 >
                     {/* Span for calculations display */}
                     <span 
-                        className="relative font-semibold text-6xl flex flex-row">
+                        className="
+                            relative text-4xl flex flex-row -bottom-9
+                            items-center justify-end truncate
+                        ">
                             {partBeforeCursor}
-                        <span className="font-light">|</span> {/* The cursor */}
+                        <span className="font-light text-3xl animate-[cursor-blink_1s_steps(1)_infinite]">|</span> {/* The cursor */}
                             {partAfterCursor}
                     </span>
 
                     {/* Span for results display */}
-                    <span>{result}</span>
+                    <span className="
+                        w-full relative right-0 flex flex-row items-center justify-end
+                        text-5xl font-semibold -bottom-10
+                    ">{result}</span>
                 </div>
 
                 {(mode === 'Scientific') && (
-                    <div className="cursor-pointer flex gap-1 absolute bottom-0">
+                    <div className="cursor-pointer text-[14px] font-semibold flex gap-1 absolute top-1 left-3">
                         <button 
                             className={`
-                                cursor-pointer p-1 rounded-lg
+                                cursor-pointer p-0.5 rounded-lg
                                 ${angleMode === 'degrees' ? 'bg-blue-200' : ''}
                             `}
-                            onClick={() => setAngleMode('degrees')}
+                            onClick={() => {
+                                    setAngleMode('degrees')
+                                    localStorage.setItem('angle-mode', angleMode)
+                                }
+                            }
                         >DEG</button>
                         <button
                             className={`
-                                cursor-pointer p-1 rounded-lg
+                                cursor-pointer p-0.5 rounded-lg
                                 ${angleMode === 'radians' ? 'bg-blue-200' : ''}
                             `}
-                            onClick={() => setAngleMode('radians')}
+                            onClick={() => {
+                                setAngleMode('radians')
+                                localStorage.setItem('angle-mode', angleMode)
+                            }}
                         >RAD</button>
                     </div>
                 )}
