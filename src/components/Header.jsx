@@ -5,7 +5,7 @@ const Header = ({isOpen, setIsOpen}) => {
     }
 
     return ( 
-        <div className="shrink-0 flex items-center bg-blue-300">
+        <div className="shrink-0 flex items-center">
 
             {/* Calc Header content */}
             <div className="w-full flex justify-center items-center relative h-7">
@@ -35,7 +35,11 @@ const Header = ({isOpen, setIsOpen}) => {
                         </svg>
                     )}
                 </span>
-                <p>SmartCalcX</p>  
+                <span className="flex items-center gap-2">
+                    <hr className='border-2 w-1.5 rounded-full' />
+                    <p className="font-semibold">SmartCalcX</p>
+                    <hr className='border-2 w-1.5 rounded-full' />
+                </span>
             </div> 
         </div>
     );
