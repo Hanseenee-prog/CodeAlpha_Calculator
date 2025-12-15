@@ -103,7 +103,7 @@ const SideBar = ({ isOpen, onModeChange }) => {
                 <ul 
                     ref={menuListRef}
                     className="
-                        mt-5 relative w-full h-[86%] overflow-y-scroll 
+                        mt-5 relative w-full h-[95%] overflow-y-scroll 
                         [&::-webkit-scrollbar]:hidden 
                 ">
                     {/* eslint-disable-next-line no-unused-vars */}
@@ -123,13 +123,13 @@ const SideBar = ({ isOpen, onModeChange }) => {
                             <div 
                                 ref={itemRef}
                                 key={label}
-                                className="flex flex-col items-stretch mb-5"
+                                className="flex flex-col items-center mb-5"
                             >
                                 <li 
                                     className="
-                                        p-3 border-black border-2 rounded-2xl
-                                      hover:bg-emerald-700 flex items-center justify-between
-                                        space-x-3 cursor-pointer w-full
+                                        p-3 rounded-t-2xl
+                                      hover:bg-blue-200 flex items-center justify-between
+                                        space-x-3 cursor-pointer w-[90%] border-b
                                     "
                                     onClick={handleClick}
                                 >
@@ -150,6 +150,7 @@ const SideBar = ({ isOpen, onModeChange }) => {
 
                                 {/* The dropdown div */}
                                 <div className={`
+                                    w-[90%]
                                     transition-all duration-500 ease-in-out overflow-hidden
                                     ${isOpenDropdown ? 'max-h-screen' : 'max-h-0'}
                                 `}>
@@ -167,7 +168,7 @@ const SideBar = ({ isOpen, onModeChange }) => {
         // The main return wraps the dynamic content in the sidebar
         return (
             <div className={`
-                absolute bg-blue-200 top-0 left-0
+                absolute bg-blue-300 top-0 left-0
                 opacity-100 h-full z-30 rounded-tr-3xl rounded-br-3xl
                 transition-all duration-300 overflow-hidden 
                 ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }

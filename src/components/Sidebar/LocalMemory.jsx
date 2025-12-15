@@ -13,15 +13,21 @@ const LocalMemory = () => {
 
     const renderMemoryLog = useCallback(() => {
         return (
-            <div className="h-full border-2 w-full p-2 overflow-y-auto">
-                <div className="text-sm text-gray-500">Memory Log</div>
+            <div className="h-[85%] w-full p-2">
+                <div className="text-sm text-gray-500 pb-1.5">Memory Log</div>
 
                 {(!isEmptyMemory) 
                 ? (
-                    <div className="h-full border-2 border-red-200 w-full">
+                    <div className="h-full w-full overflow-y-scroll [&::-webkit-scrollbar]:hidden flex flex-col gap-2">
                         {memoryLog.map((entry, index) => {
                             return (
-                                <div key={index} className="flex justify-between p-2 border-b border-gray-200">
+                                <div 
+                                    key={index} 
+                                    className="
+                                        flex justify-between p-2
+                                        h-12 w-full cursor-pointer
+                                        items-center bg-blue-100
+                                ">
                                     <span>{entry}</span>
                                 </div>
                             )

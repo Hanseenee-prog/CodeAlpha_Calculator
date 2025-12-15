@@ -14,7 +14,7 @@ const Themes = () => {
     const renderThemes = useCallback(() => {
         return ( 
             <div className="
-                flex flex-row rounded-full h-12 bg-emerald-200
+                flex flex-row rounded-2xl h-12 bg-emerald-200
                 items-center w-4/5 cursor-pointer
             ">
                 {themes.map(({label, Icon}) => {
@@ -22,7 +22,7 @@ const Themes = () => {
                         <div
                             key={label} 
                             className={`
-                                flex items-center justify-center w-3/5 h-full rounded-full
+                                flex items-center justify-center w-1/2 h-full rounded-2xl
                                 ${theme === label ? 'bg-amber-400' : ''}
                             `}
                             onClick={() => setTheme(label)}

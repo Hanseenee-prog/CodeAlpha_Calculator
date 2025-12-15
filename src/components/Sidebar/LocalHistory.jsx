@@ -24,15 +24,19 @@ const LocalHistory = () => {
         }   
 
         return ( 
-            <div className="relative overflow-hidden h-full border-red-700 border-2">
+            <div className="
+                relative overflow-hidden h-full pl-3 pr-3
+            ">
+                <div className="text-sm text-gray-500 pb-1.5">History Log</div>
+
                 {!(isEmptyHistory) ? (
-                    <div className="p-2 h-full">
+                    <div className="h-full overflow-y-scroll [&::-webkit-scrollbar]:hidden flex flex-col gap-1.5">
                         {history.map(({displayExpression, result}, index) => {
                             return (
                                 <button
                                     key={index}
                                     className="
-                                        h-12 border-2 w-full cursor-pointer flex
+                                        h-12 w-full cursor-pointer flex
                                         items-center bg-blue-100 hover:bg-blue-200
                                     "
                                 >
@@ -63,8 +67,8 @@ const LocalHistory = () => {
                 {!(isEmptyHistory) && (
                     <button 
                         className="
-                            w-full h-13 flex items-center justify-center cursor-pointer
-                            relative bottom-13 border-2 bg-blue-300 hover:bg-blue-400"
+                            w-full h-12 flex items-center justify-center cursor-pointer
+                            relative bottom-[74px] shadow-lg bg-blue-400 hover:bg-blue-500"
                             onClick={() => clearHistory()}
                     >
                         <Trash2 className="w-5 h-5" />
