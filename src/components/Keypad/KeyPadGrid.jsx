@@ -18,8 +18,9 @@ const KeyPadGrid = ({ buttons, onButtonClick }) => {
     }, [buttons, onButtonClick])
 
     return (
-        <div className="flex-1 border-3 border-blue-200 p-4 rounded-t-[44px]">
-            <div className="grid grid-cols-5 grid-rows-6 gap-1 place-items-center h-full">
+        <div className="flex flex-col justify-center items-center flex-1 p-4 shadow-lg">
+            <hr className="w-full rounded-full" />
+            <div className="grid grid-cols-5 grid-rows-6 gap-1 place-items-center self-stretch h-full">
                 {renderButtons()}
             </div> 
         </div>
