@@ -12,7 +12,7 @@ export const standardButtons = [
   { label: '←', type: 'move_left', style: 'accent' }, 
   { label: '→', type: 'move_right', style: 'accent' }, 
   { label: '÷', value: '/', type: 'operator', style: 'accent' }, 
-  { label: '√', value: '√', type: 'sqrt', style: 'function' }, 
+  { label: '√', type: 'function', func: '√', style: 'scientific' }, 
   
   // Row 3 
   { label: '7', value: '7', type: 'number', style: 'number' }, 
