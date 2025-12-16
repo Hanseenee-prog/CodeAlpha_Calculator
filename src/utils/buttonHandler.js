@@ -25,6 +25,9 @@ export const handleButtonClick = (button, state, actions) => {
         case 'answer':  
         case 'bracket':
         case 'constant':
+        case 'permutation':
+        case 'combination':
+        case 'Rand':
             handleAction('insert_text', value);
             break; 
             

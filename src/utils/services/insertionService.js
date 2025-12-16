@@ -24,9 +24,9 @@ export const insertAtCursor = (expression, cursorPosition, newText, isResultDisp
 
     if (checks.isZero) {
         updatedIsResultDisplayed = false;
-        // Handle '0' to '0.'
-        if (checks.isDecimal) {
-            newExpr = '0.';
+        // Handle '0' to '0.' or '0!'
+        if (checks.isDecimal || checks.isFactorial) {
+            newExpr = `0${newText}`;
             newCursorPos = 2;
         } 
         // Handle initial '0' replacement
@@ -35,8 +35,8 @@ export const insertAtCursor = (expression, cursorPosition, newText, isResultDisp
             newCursorPos = newText.length;
         } else {
             // If operator, fall through to normal insertion logic: '0' + '+' = '0+'
-             newExpr = newExpr.slice(0, cursorPosition) + newText + newExpr.slice(cursorPosition);
-             newCursorPos = cursorPosition + newText.length;
+            newExpr = newExpr.slice(0, cursorPosition) + newText + newExpr.slice(cursorPosition);
+            newCursorPos = cursorPosition + newText.length;
         }
 
         return { newExpr, newCursorPos, isResultDisplayed: updatedIsResultDisplayed };

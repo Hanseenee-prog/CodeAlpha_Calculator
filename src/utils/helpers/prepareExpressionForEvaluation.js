@@ -1,8 +1,20 @@
 export const prepareExpressionForEvaluation = (expression, lastAns) => {
     let expr = expression;
 
-    expr = expr.replace(/Ans/g, lastAns.toString());
     expr = expr.replace(/π/g, Math.PI.toString());
+
+    // Permutations and Combinations
+    expr = expr.replace(/(\d+(?:\.\d+)?|\([^()]+\))P(\d+(?:\.\d+)?|\([^()]+\))/g, 'permutations($1, $2)');
+    expr = expr.replace(/(\d+(?:\.\d+)?|\([^()]+\))C(\d+(?:\.\d+)?|\([^()]+\))/g, 'combinations($1, $2)');
+
+    // Replace 'Rand' with a random number or 'Ans' with last answer
+    expr = expr.replace(/(\d+(\.\d+)?|\))?(Ans|Rand)/g, (match, prev) => {
+        let value;
+        if (match.includes('Ans')) value = lastAns.toString();
+        else if (match.includes('Rand')) value = Math.random();
+
+        return prev ? `${prev}*${value}` : `${value}`;
+    });
 
     const basePatternSource = '(\\d+(?:\\.\\d+)?|\\((?:.*?)\\)|[a-zA-Z]+)';
 

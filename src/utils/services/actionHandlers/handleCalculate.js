@@ -19,6 +19,8 @@ export const handleCalculate = (expression, lastAns, result, angleMode) => {
             asin: (x) => angleMode === 'degrees' ? Math.asin(x) * RAD_TO_DEG : Math.asin(x),
             acos: (x) => angleMode === 'degrees' ? Math.acos(x) * RAD_TO_DEG : Math.acos(x),
             atan: (x) => angleMode === 'degrees' ? Math.atan(x) * RAD_TO_DEG : Math.atan(x),
+            permutations: math.permutations,
+            combinations: math.combinations,
         });
 
         // Check for Complex/Invalid Results from mathjs
@@ -48,6 +50,7 @@ export const handleCalculate = (expression, lastAns, result, angleMode) => {
             ...result,
             resultValue: 'Error',
             newExpr: 'Error',
+            newCursorPos: 'Error'.length,
             isResultDisplayed: true,
         }
     }

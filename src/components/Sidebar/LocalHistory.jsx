@@ -59,7 +59,7 @@ const LocalHistory = () => {
                         })}
                     </div>
                 ) : (
-                    <div className="w-full text-center border-2 font-semibold text-[20px]">
+                    <div className="w-full text-center font-semibold text-[20px]">
                         <p>No calculations in history yet...</p>
                     </div>
                 )}

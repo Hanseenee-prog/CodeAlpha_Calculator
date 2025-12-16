@@ -45,8 +45,8 @@ export const standardButtons = [
 export const scientificButtons = [
   // Row 1 - Mode toggles and brackets 
   { label: '2nd', type: 'secondary', style: 'mode' }, 
-  { label: 'deg', type: 'angle-mode', style: 'mode' }, 
-  { label: 'rad', type: 'angle-mode', style: 'mode' }, 
+  { label: 'nPr', value: 'P', type: 'permutation', style: 'mode' }, 
+  { label: 'nCr', value: 'C', type: 'combination', style: 'mode' }, 
   { label: '(', value: '(', type: 'bracket', style: 'function' }, 
   { label: ')', value: ')', type: 'bracket', style: 'function' }, 
   
@@ -100,14 +100,14 @@ export const scientificButtons = [
   { label: '-', value: '-', type: 'operator', style: 'accent' }, 
   
   // Row 9 
-  { label: '=', type: 'equals', style: 'equals' }, 
+  { label: '±', type: 'negate', style: 'function' }, 
   { label: '1', value: '1', type: 'number', style: 'number' }, 
   { label: '2', value: '2', type: 'number', style: 'number' }, 
   { label: '3', value: '3', type: 'number', style: 'number' }, 
   { label: '+', value: '+', type: 'operator', style: 'accent' }, 
   
   // Row 10
-  { label: '=', type: 'equals', style: 'accent' },
+  { label: 'Rand', value: 'Rand', type: 'Rand', style: 'function' },
   { label: '.', value: '.', type: 'decimal', style: 'number' }, 
   { label: '0', value: '0', type: 'number', style: 'number' }, 
   { label: 'Ans', value: 'Ans', type: 'answer', style: 'clear' }, 
