@@ -14,14 +14,14 @@ export const useCalcLogic = () => {
     } = useAppContext();
     
     const [result, setResult] = useState('0');
-    const [lastAns, setLastAns] = useState('0'); // For controlling the 'Ans' button
+    const [lastAns, setLastAns] = useState(() => localStorage.getItem('lastAns') || '0'); // For controlling the 'Ans' button
 
     // Ref to hold latest state for voice commands
     const stateRef = useRef({
         expression: '0',
         result: '0',
         cursorPosition: 1,
-        lastAns: '0',
+        lastAns: localStorage.getItem('lastAns') || '0',
         isResultDisplayed: false,
         angleMode: 'radians'
     });
@@ -134,6 +134,7 @@ export const useCalcLogic = () => {
                 setLastAns(stateRef.current.lastAns);
                 setResult(stateRef.current.resultValue);
                 setIsResultDisplayed(stateRef.current.isResultDisplayed);
+                localStorage.setItem('lastAns', stateRef.current.lastAns);
 
                 break;
             }
