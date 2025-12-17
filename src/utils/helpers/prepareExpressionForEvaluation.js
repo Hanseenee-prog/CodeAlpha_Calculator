@@ -1,7 +1,11 @@
 export const prepareExpressionForEvaluation = (expression, lastAns) => {
     let expr = expression;
 
-    expr = expr.replace(/π/g, Math.PI.toString());
+    expr = expr.replace(/(π|×|÷)/g, (match) => {
+        if (match === 'π') return Math.PI.toString();
+        if (match === '×') return '*';
+        if (match === '÷') return '/';
+    });
 
     // Permutations and Combinations
     expr = expr.replace(/(\d+(?:\.\d+)?|\([^()]+\))P(\d+(?:\.\d+)?|\([^()]+\))/g, 'permutations($1, $2)');

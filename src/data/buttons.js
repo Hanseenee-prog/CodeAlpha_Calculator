@@ -11,14 +11,14 @@ export const standardButtons = [
   { label: 'DEL', type: 'DEL', style: 'accent' }, 
   { label: '←', type: 'move_left', style: 'accent' }, 
   { label: '→', type: 'move_right', style: 'accent' }, 
-  { label: '÷', value: '/', type: 'operator', style: 'accent' }, 
+  { label: '÷', value: '÷', type: 'operator', style: 'accent' }, 
   { label: '√', type: 'function', func: '√', style: 'scientific' }, 
   
   // Row 3 
   { label: '7', value: '7', type: 'number', style: 'number' }, 
   { label: '8', value: '8', type: 'number', style: 'number' }, 
   { label: '9', value: '9', type: 'number', style: 'number' }, 
-  { label: '×', value: '*', type: 'operator', style: 'accent' }, 
+  { label: '×', value: '×', type: 'operator', style: 'accent' }, 
   { label: '%', value: '%', type: 'percent', style: 'function' }, 
   
   // Row 4 
@@ -83,14 +83,14 @@ export const scientificButtons = [
   { label: 'DEL', type: 'DEL', style: 'accent' }, 
   { label: '←', type: 'move_left', style: 'accent' }, 
   { label: '→', type: 'move_right', style: 'accent' }, 
-  { label: '÷', value: '/', type: 'operator', style: 'accent' }, 
+  { label: '÷', value: '÷', type: 'operator', style: 'accent' }, 
   
   // Row 7
   { label: '%', value: '%', type: 'percent', style: 'function' }, 
   { label: '7', value: '7', type: 'number', style: 'number' }, 
   { label: '8', value: '8', type: 'number', style: 'number' }, 
   { label: '9', value: '9', type: 'number', style: 'number' }, 
-  { label: '×', value: '*', type: 'operator', style: 'accent' }, 
+  { label: '×', value: '×', type: 'operator', style: 'accent' }, 
   
   // Row 8
   { label: 'n!', type: 'function', func: '!', style: 'scientific' }, 
