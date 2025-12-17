@@ -9,7 +9,6 @@ export const AppProvider = ({ children }) => {
     const [mode, setMode] = useState('Standard');
     const [angleMode, setAngleMode] = useState(() => localStorage.getItem('angle-mode') || 'degrees');
     const [isOpen, setIsOpen] = useState(false);
-    const [theme, setTheme] = useState('Light');
     const [expression, setExpression] = useState('0');
     const [cursorPosition, setCursorPosition] = useState(1);
     const [isResultDisplayed, setIsResultDisplayed] = useState(false);
@@ -98,7 +97,6 @@ export const AppProvider = ({ children }) => {
         mode, setMode,
         angleMode, setAngleMode,
         isOpen, setIsOpen,
-        theme, setTheme,
         expression, setExpression,
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,

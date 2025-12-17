@@ -9,117 +9,85 @@ const SoundRecorder = ({ onTranscript }) => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (!SpeechRecognition) {
-            console.log('Your brower doesn\'t support speech recognition');
+            console.log('Your browser doesn\'t support speech recognition');
             return;
         }
     
-        // Initialize the speech recorder once
         const recognition = new SpeechRecognition();
         recognition.lang = 'en-US';
         recognition.continuous = true;
         recognition.interimResults = true;
 
-        // Save it`
         recognitionRef.current = recognition;
 
-        // Event listeners
         recognition.onstart = () => {
-            console.log('Voice recognition started. Speak into the microphone.');
+            console.log('Voice recognition started.');
         }
 
         recognition.onend = () => {
-            console.log('Voice recognition ended.');
             setIsListening(false);
         }
 
         recognition.onresult = (e) => {
-            // Get the latest result
             const lastResultIndex = e.results.length - 1;
             const result = e.results[lastResultIndex];
             
-            // Only process final results
             if (result.isFinal) {
                 const text = result[0].transcript;
-                console.log('Final:', text);
-                // console.log(e.results);
-
                 const command = parseVoiceCommand(text);
                 if (command && onTranscript) onTranscript(command);
-            }
-            else {
-                const text = result[0].transcript;
-                console.log('Interim', text);
             }
         }
 
         recognition.onerror = (e) => {
-            console.log('Speech error', e.error);
-            if (e.error === 'network') {
-                console.log('Network error - retrying...')
-
-                // Auto-restart after network error
+            if (e.error === 'network' && isListening) {
                 setTimeout(() => {
-                    if (isListening) {
-                        try {
-                            recognition.start();
-                        } catch {
-                            console.log('Already running.')
-                        }
-                    }
+                    try { recognition.start(); } catch { /* Already running */ }
                 }, 1000);
             }
-
-            if (e.error === 'no-speech') console.log('No speech detected, try again..');
-            if (e.error === 'aborted') console.log('Recognition aborted')
         }
 
-        // Cleanup function
         return () => {
             if (recognitionRef.current) recognitionRef.current.stop();
         }
-    }, [onTranscript, isListening]) // Only run once after the component unmounts
+    }, [onTranscript, isListening])
 
     const startVoiceRecorder = () => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
-
         try {
             recognition.start();
-            console.log('Voice recorder started...');
             setIsListening(true);
-        } catch (e) {
-            console.log('Recognition already started', e.error);
-        }
+        } catch (e) { console.log(e); }
     }
 
     const endVoiceRecorder = () => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
         recognition.stop();
-        console.log('Voice recorder stopped.');
         setIsListening(false);
     }
 
     return ( 
-        <button className={`
-            absolute bottom-0 left-3 h-10
-            flex flex-row items-center gap-1
-        `}>
+        <button className="absolute bottom-1 left-3 h-9 flex flex-row items-center gap-2">
             <span 
                 onClick={isListening ? endVoiceRecorder : startVoiceRecorder}
                 className={`
-                    cursor-pointer h-full rounded-2xl w-10
-                    flex flex-row items-center justify-center
-                    ${ isListening ? 'bg-red-500' : 'bg-blue-300 hover:scale-105' }
+                    cursor-pointer h-full rounded-xl w-9
+                    flex items-center justify-center transition-all duration-300
+                    ${ isListening 
+                        ? 'bg-red-600 dark:bg-red-700 text-white shadow-lg shadow-red-500/40 animate-pulse' 
+                        : 'bg-blue-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:scale-105' 
+                    }
                 `}
             >
                 <svg 
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24" fill="none" 
-                    stroke="currentColor" strokeWidth="2" 
+                    stroke="currentColor" strokeWidth="2.5" 
                     strokeLinecap="round" strokeLinejoin="round"
-                    className={`w-5 h-5`}
-                    >
+                    className="w-4 h-4"
+                >
                     <rect x="9" y="3" width="6" height="10" rx="3" />
                     <path d="M19 11a7 7 0 0 1-14 0" />
                     <path d="M12 21v-3" />
@@ -128,13 +96,14 @@ const SoundRecorder = ({ onTranscript }) => {
             </span>
 
             { isListening && (
-                <span className={`
-                    bg-red-500 rounded-2xl h-full text-[14px] grid place-items-center pl-1 pr-1
-                    transition-all duration-500 ease-in-out overflow-hidden
-                    ${isListening ? 'w-16' : 'w-0'}
-                `}>Listening...</span> 
-                )
-            }
+                <span className="
+                    bg-red-600 dark:bg-red-700 text-white font-medium 
+                    rounded-xl h-full text-[12px] px-3 flex items-center 
+                    shadow-lg shadow-red-500/20 transition-all
+                ">
+                    Listening...
+                </span> 
+            )}
         </button>
     );
 }

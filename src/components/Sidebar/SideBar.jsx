@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef, forwardRef } from "react";
 import Modes from './Modes';
 import LocalHistory from './LocalHistory';
 import LocalMemory from './LocalMemory';
@@ -17,7 +17,7 @@ import { useAppContext } from "../Contexts/AppContext";
 const FULL_SCREEN_IDS = ['History', 'Memory', 'Settings'];
 const DROP_DOWN_IDS = ['Modes', 'Themes', 'About'];
 
-const SideBar = ({ isOpen, onModeChange }) => {
+const SideBar = forwardRef(({ isOpen, onModeChange }, ref) => {
     // State to track the active view/component or dropdown view/component (null means main menu)
     const [activeViewId, setActiveViewId] = useState(null);
     const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -88,12 +88,17 @@ const SideBar = ({ isOpen, onModeChange }) => {
 
             contentToRender = (
                 <div className="pl-3.5 pr-3.5 h-full flex flex-col"> 
-                    <button onClick={goBack} className="flex items-center text-blue-600 mb-3 p-2"> 
+                    <button 
+                        onClick={goBack} 
+                        className="flex items-center text-blue-600 dark:text-blue-300 mb-3 p-2 hover:bg-blue-200 dark:hover:bg-slate-700/60 rounded-xl transition-colors"
+                    > 
                         <ArrowLeft className="w-5 h-5 mr-2" />
                         Back to Menu
                     </button>
 
-                    {activeView.component}
+                    <div className="h-full dark:text-slate-200">
+                        {activeView.component}
+                    </div>
                 </div>
             );
         } 
@@ -106,7 +111,7 @@ const SideBar = ({ isOpen, onModeChange }) => {
                         mt-5 relative w-full h-[95%] overflow-y-scroll 
                         [&::-webkit-scrollbar]:hidden 
                 ">
-                    {/* eslint-disable-next-line no-unused-vars */}
+                    {/* eslint-disable-next-line */}
                     {menuItems.map(({label, component, Icon}) => {
                         const isDropdown = DROP_DOWN_IDS.includes(label);
                         const isOpenDropdown = dropdownOpenId === label;
@@ -127,9 +132,10 @@ const SideBar = ({ isOpen, onModeChange }) => {
                             >
                                 <li 
                                     className="
-                                        p-3 rounded-t-2xl
-                                      hover:bg-blue-200 flex items-center justify-between
-                                        space-x-3 cursor-pointer w-[90%] border-b
+                                        p-3 rounded-t-2xl flex items-center justify-between
+                                        space-x-3 cursor-pointer w-[90%] border-b border-blue-400/30 dark:border-slate-600/50
+                                        text-slate-900 dark:text-slate-100
+                                        hover:bg-blue-200 dark:hover:bg-slate-700 transition-colors
                                     "
                                     onClick={handleClick}
                                 >
@@ -142,7 +148,9 @@ const SideBar = ({ isOpen, onModeChange }) => {
 
                                     {/* Always show the current mode */}
                                     {label === 'Modes' && (
-                                        <span className="relative -right-12 text-sm font-bold">[{mode}]</span>
+                                        <span className="text-sm font-bold text-blue-800 dark:text-blue-300">
+                                            [{mode}]
+                                        </span>
                                     )}
 
                                     {NavIcon && <NavIcon className="w-4 h-4" />}
@@ -154,7 +162,7 @@ const SideBar = ({ isOpen, onModeChange }) => {
                                     transition-all duration-500 ease-in-out overflow-hidden
                                     ${isOpenDropdown ? 'max-h-screen' : 'max-h-0'}
                                 `}>
-                                    <div className="p-4 bg-blue-100 m-2 rounded-lg shadow-inner flex items-center justify-center">
+                                    <div className="p-4 bg-blue-100 dark:bg-slate-800/80 m-2 rounded-lg shadow-inner flex items-center justify-center border dark:border-slate-700">
                                         {component}
                                     </div>
                                 </div>
@@ -168,19 +176,21 @@ const SideBar = ({ isOpen, onModeChange }) => {
         // The main return wraps the dynamic content in the sidebar
         return (
             <div className={`
-                absolute bg-blue-300 top-0 left-0
+                absolute bg-blue-300 dark:bg-slate-800 top-0 left-0
                 opacity-100 h-full z-30 rounded-tr-3xl rounded-br-3xl
-                transition-all duration-300 overflow-hidden 
-                ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-1/3' : 'w-0' }
-            `}> 
+                overflow-hidden shadow-2xl
+                ${ isOpen ? 'w-3/4 sm:w-1/2 md:w-4/5' : 'w-0' }
+            `}
+                ref={ref}
+            > 
                 <div className="mt-13 h-[87%]">
                     {contentToRender}
                 </div>
             </div>
         );
-    }, [isOpen, activeViewId, dropdownOpenId, onModeChange, mode]);
+    }, [isOpen, activeViewId, dropdownOpenId, onModeChange, mode, ref]);
 
     return renderMenuItems();
-}
+})
  
 export default SideBar;

@@ -14,6 +14,7 @@ function Calculator() {
   const { expression, result, onButtonClick, clear, cursorPosition, handleAction, moveCursor } = useCalcLogic();
   const { setMode, isOpen, setIsOpen } = useAppContext();
   const isProcessingVoice = useRef(false);
+  const sideBarRef = useRef(null);
 
   // Handle mode change - like scientific, standard, etc
   const handleModeChange = (newMode) => {
@@ -28,7 +29,6 @@ function Calculator() {
   };
 
   const handleVoiceCommand = useCallback(async (command) => {
-    // Process the voice command here
     console.log('Voice Command Received in Calculator:', command);
     if (!command) return;
 
@@ -38,7 +38,6 @@ function Calculator() {
     isProcessingVoice.current = true;
 
     try {
-      // Handle action commands
       if (command.type !== 'insert_text') {
         if (command.type === 'left' || command.type === 'right') {
           moveCursor(command.type);
@@ -46,19 +45,15 @@ function Calculator() {
         else if (command.type === 'calculate') {
           await delay(200);
           handleAction('calculate');
-          console.log('waited')
         }
         else handleAction(command.type); 
         return;
       }
 
-      // Handle insert commands
       if (command.type === 'insert_text' && command.value) {
         const characters = command.value.split('');
-
         for (const char of characters) {
           handleAction('insert_text', char);
-          console.log(char);
           await delay(100);
         }
       }
@@ -68,21 +63,35 @@ function Calculator() {
     }
   }, [moveCursor, handleAction]);
 
+  const handleBodyClick = (e) => {
+    if (!isOpen) return;
+
+    if (sideBarRef.current?.contains(e.target)) return;
+    setIsOpen(false);
+    console.log('Body clicked')
+  }
+
   return (
     <div className='
-      w-[90vw] h-[90vh] min-w-[320px] min-h-[480px]
-      md:h-[80vh] md:max-w-[80vw] 
-      lg:max-h-[80vh] lg:max-w-[60vw] 
-      bg-gray-100 shadow-lg mx-auto'
+      w-[95vw] h-[95dvh] min-w-[320px] min-h-[500px]
+      md:h-[85vh] md:max-w-[420px] 
+      lg:h-[90vh] lg:max-w-[560px] 
+      bg-gray-100 dark:bg-slate-800 
+      shadow-2xl mx-auto
+      rounded-3xl border border-gray-200 dark:border-slate-700
+      overflow-hidden'
     >
                       
-      <div className="h-full flex items-stretch flex-col w-full relative overflow-hidden">
+      <div className="h-full flex items-stretch flex-col w-full relative overflow-hidden bg-transparent"
+        onClick={handleBodyClick}
+      >
         <Header 
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
 
         <SideBar 
+          ref={sideBarRef}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           onModeChange={handleModeChange}
@@ -94,6 +103,7 @@ function Calculator() {
           cursorPosition={cursorPosition}
           onTranscript={handleVoiceCommand}
         />
+        
         <KeyPadGrid 
           buttons={buttons}
           onButtonClick={onButtonClick}
