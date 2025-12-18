@@ -57,30 +57,42 @@ function Calculator() {
     isProcessingVoice.current = true;
 
     try {
-      if (command.type !== 'insert_text') {
-        if (command.type === 'left' || command.type === 'right') {
-          moveCursor(command.type);
+        // Detect if mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Handle array of commands
+        const commands = Array.isArray(command) ? command : [command];
+        
+        for (const cmd of commands) {
+            if (cmd.type !== 'insert_text') {
+                if (cmd.type === 'left' || cmd.type === 'right') {
+                    moveCursor(cmd.type);
+                }
+                else if (cmd.type === 'calculate') {
+                    await delay(200);
+                    handleAction('calculate');
+                }
+                else handleAction(cmd.type); 
+            }
+            else if (cmd.type === 'insert_text' && cmd.value) {
+                if (isMobile) {
+                    // Mobile: Insert all at once (no typing effect)
+                    handleAction('insert_text', cmd.value);
+                } else {
+                    // PC: Character-by-character with typing effect
+                    const characters = cmd.value.split('');
+                    for (const char of characters) {
+                        handleAction('insert_text', char);
+                        await delay(100);
+                    }
+                }
+            }
         }
-        else if (command.type === 'calculate') {
-          await delay(200);
-          handleAction('calculate');
-        }
-        else handleAction(command.type); 
-        return;
-      }
-
-      if (command.type === 'insert_text' && command.value) {
-        const characters = command.value.split('');
-        for (const char of characters) {
-          handleAction('insert_text', char);
-          await delay(100);
-        }
-      }
     } 
     finally {
       isProcessingVoice.current = false;
     }
-  }, [moveCursor, handleAction]);
+}, [moveCursor, handleAction]);
 
   const handleBodyClick = (e) => {
     if (!isOpen) return;
