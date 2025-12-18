@@ -1,7 +1,26 @@
 export const parseVoiceCommand = (text) => {
     let commandText = text.toLowerCase().trim();
 
-    // 1. Regex to split the sentence by command keywords
+    // 1. First, replace operator words with symbols BEFORE splitting
+    commandText = commandText.replace(/\btimes\b|\bmultiply\b|\bmultiplied by\b/g, '×');
+    commandText = commandText.replace(/\bdivide\b|\bdivided by\b/g, '÷');
+    commandText = commandText.replace(/\badd\b|\bplus\b/g, '+');
+    commandText = commandText.replace(/\bminus\b|\bsubtract\b/g, '-');
+    commandText = commandText.replace(/\bpoint\b|\bdot\b/g, '.');
+    commandText = commandText.replace(/\bpercent\b/g, '%');
+
+    // Replace number words with digits
+    const numberWords = {
+        'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
+        'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'
+    };
+
+    Object.keys(numberWords).forEach(word => {
+        const regex = new RegExp(`\\b${word}\\b`, 'g');
+        commandText = commandText.replace(regex, numberWords[word]);
+    });
+
+    // 2. NOW split by command keywords (operators are already converted)
     const actionRegex = /\b(equals?|equal to|calculate|result|is|clear|clean|delete|backspace|negate|plus minus|reciprocal|1 over x|inverse of|move left|move right|left|right|memory store|store|memory recall|recall|memory plus|memory add|memory clear|memory minus|absolute|absolute value|factorial|random|rand|sine|sin|cosine|cos|tangent|tan|logarithm|log|natural log|ln|pi|squared|cubed|power of|to the power|open bracket|parenthesis|close bracket|close parenthesis)\b/;
 
     const parts = commandText.split(actionRegex);
@@ -19,15 +38,15 @@ export const parseVoiceCommand = (text) => {
         else if (['reciprocal', '1 over x', 'inverse of'].includes(part)) commands.push({ type: 'reciprocal' });
         else if (['move left', 'left'].includes(part)) commands.push({ type: 'left' });
         else if (['move right', 'right'].includes(part)) commands.push({ type: 'right' });
-        
+
         // Memory Commands
         else if (['memory store', 'store'].includes(part)) commands.push({ type: 'memory-store' });
         else if (['memory recall', 'recall'].includes(part)) commands.push({ type: 'memory-recall' });
         else if (['memory plus', 'memory add'].includes(part)) commands.push({ type: 'memory-add' });
         else if (['memory minus'].includes(part)) commands.push({ type: 'memory-subtract' });
         else if (['memory clear'].includes(part)) commands.push({ type: 'memory-clear' });
-        
-        // Scientific Function Commands (Explicit Push)
+
+        // Scientific Function Commands
         else if (['absolute', 'absolute value'].includes(part)) commands.push({ type: 'insert_text', value: 'abs(' });
         else if (['factorial'].includes(part)) commands.push({ type: 'insert_text', value: '!' });
         else if (['random', 'rand'].includes(part)) commands.push({ type: 'insert_text', value: 'Rand' });
@@ -51,42 +70,20 @@ export const parseVoiceCommand = (text) => {
         else if (['combination'].includes(part)) commands.push({ type: 'insert_text', value: 'C' });
 
         else {
-            // This block handles Numbers and Basic Operators only
+            // Clean up and validate
             let cleanedPart = part;
-
-            const numberWords = {
-                'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
-                'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'
-            };
-
-            Object.keys(numberWords).forEach(word => {
-                const regex = new RegExp(`\\b${word}\\b`, 'g');
-                cleanedPart = cleanedPart.replace(regex, numberWords[word]);
-            });
-
-            // Operator Replacements
-            cleanedPart = cleanedPart.replace(/times|multiply|multiplied by/g, '×');
-            cleanedPart = cleanedPart.replace(/divide|divided by/g, '÷');
-            cleanedPart = cleanedPart.replace(/add|plus/g, '+');
-            cleanedPart = cleanedPart.replace(/minus|subtract/g, '-');
             cleanedPart = cleanedPart.replace(/\bx\b/gi, '×');
-            cleanedPart = cleanedPart.replace(/square roots?|root/g, '√');
-            cleanedPart = cleanedPart.replace(/point|dot/g, '.');
-            cleanedPart = cleanedPart.replace(/percent/g, '%');
             cleanedPart = cleanedPart.replace(/answer/g, 'Ans');
-
-            // Cleanup symbols
             cleanedPart = cleanedPart.replace(/[,!?;]/g, '');
             cleanedPart = cleanedPart.replace(/\s+/g, '');
 
             // STRICT VALIDATION: Only numbers and basic operators allowed here
-            if (/^[\d+\-÷×%.√Ans]+$/.test(cleanedPart)) {
+            if (/^[\d+\-÷×%.√Ans]+$/.test(cleanedPart) && cleanedPart.length > 0) {
                 commands.push({ type: 'insert_text', value: cleanedPart });
             }
         }
     }
 
-    // Outside the for loop to prevent duplication bugs
     if (commands.length === 0) return null;
     return commands.length === 1 ? commands[0] : commands;
 };
