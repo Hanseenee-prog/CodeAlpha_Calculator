@@ -7,7 +7,7 @@ const math = create(all);
 const DEG_TO_RAD = Math.PI / 180;
 const RAD_TO_DEG = 180 / Math.PI;
 
-export const handleCalculate = (expression, lastAns, result, angleMode) => {
+export const handleCalculate = (expression, lastAns, result, angleMode, settings) => {
     try {
         let expr = prepareExpressionForEvaluation(expression, lastAns);
 
@@ -29,7 +29,7 @@ export const handleCalculate = (expression, lastAns, result, angleMode) => {
         }
 
         // Format the successful numerical result
-        const formattedString = formatResult(evaluatedResult); 
+        const formattedString = formatResult(evaluatedResult, settings); 
 
         // Success path
         return {

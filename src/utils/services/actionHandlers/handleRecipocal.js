@@ -1,5 +1,6 @@
 import { getCurrentNumberAfterCursor } from '../../helpers/getCurrentNumberAfterCursor';
 import { formatResult } from '../../helpers/formatResult';
+import { prepareExpressionForEvaluation } from '../../helpers/prepareExpressionForEvaluation';
 
 export const handleReciprocal = (expression, cursorPosition, lastAns, result) => {
     const { startIndex, endIndex, currentNumber } = getCurrentNumberAfterCursor(expression, cursorPosition);
@@ -8,7 +9,7 @@ export const handleReciprocal = (expression, cursorPosition, lastAns, result) =>
     let newCursorPos = 0;
 
     try {
-        let numberToReciprocate = parseFloat(numberString);
+        let numberToReciprocate = parseFloat(prepareExpressionForEvaluation(numberString, lastAns));
         
         // Check for Percentage and apply conversion
         if (numberString.endsWith('%')) {

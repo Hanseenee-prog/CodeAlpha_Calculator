@@ -2,9 +2,17 @@ import React from "react";
 import { useAppContext } from "../Contexts/AppContext";
 
 const CalculatorButton = React.memo(({ button, onButtonClick, isAccent, isMemory }) => {
-    const { memory, mode } = useAppContext();
+    const { memory, mode, settings } = useAppContext();
     const { isMemoryActive } = memory;
     
+    const handleClick = (button) => {
+        if (settings?.vibration && window.navigator.vibrate) {
+            window.navigator.vibrate(15);
+            console.log("📳 Haptic Active");
+        }
+        onButtonClick(button);
+    };
+
     const baseStyle = `
         w-full h-full flex items-center justify-center 
         font-semibold cursor-pointer shadow-sm
@@ -36,7 +44,7 @@ const CalculatorButton = React.memo(({ button, onButtonClick, isAccent, isMemory
     return ( 
         <button 
             className={`${baseStyle} ${getFinalStyles()}`}
-            onClick={() => onButtonClick(button)}
+            onClick={() => handleClick(button)}
             disabled={!isMemoryActive && (button.label === 'MR' || button.label === 'MC')}    
         >
             {button.label}

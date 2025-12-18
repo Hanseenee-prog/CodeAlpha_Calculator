@@ -10,7 +10,7 @@ export const useCalcLogic = () => {
         angleMode,
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
-        addHistoryEntry, memory, 
+        addHistoryEntry, memory, settings
     } = useAppContext();
     
     const [result, setResult] = useState('0');
@@ -23,7 +23,8 @@ export const useCalcLogic = () => {
         cursorPosition: 1,
         lastAns: localStorage.getItem('lastAns') || '0',
         isResultDisplayed: false,
-        angleMode: 'radians'
+        angleMode: 'radians',
+        settings: {}
     });
     
     useEffect(() => {
@@ -33,9 +34,10 @@ export const useCalcLogic = () => {
             cursorPosition,
             lastAns,
             isResultDisplayed,
-            angleMode
+            angleMode,
+            settings
         }
-    }, [expression, result, cursorPosition, lastAns, isResultDisplayed, angleMode]);
+    }, [expression, result, cursorPosition, lastAns, isResultDisplayed, angleMode, settings]);
 
     // Function to move the cursor
     const moveCursor = useCallback(direction => {
@@ -62,6 +64,11 @@ export const useCalcLogic = () => {
     }, [setCursorPosition]);
 
     const handleAction = useCallback((actionType, value) => {
+        // Trigger vibration for Keyboard or Voice actions if enabled
+        if (stateRef.current.settings?.vibration && window.navigator.vibrate) {
+            window.navigator.vibrate(10);
+        }
+        
         switch (actionType) {
             case 'memory-store': {
                 const valueToStore = parseFloat(stateRef.current.expression);
@@ -111,6 +118,7 @@ export const useCalcLogic = () => {
                     currentState.result,
                     currentState.angleMode,
                     value,
+                    currentState.settings
                 )
 
                 // Check if the updates object returned history data

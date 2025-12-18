@@ -1,9 +1,15 @@
-import { createContext, useState, useContext, useMemo, useCallback } from 'react';
+import { createContext, useState, useEffect, useContext, useMemo, useCallback } from 'react';
 
 const AppContext = createContext();
 
 {/* eslint-disable-next-line react-refresh/only-export-components */}
 export const useAppContext = () => useContext(AppContext);
+
+const DEFAULT_SETTINGS = {
+    vibration: true,
+    precision: 2,
+    separators: true,
+};
 
 export const AppProvider = ({ children }) => {
     const [mode, setMode] = useState(() => localStorage.getItem('calculatorMode') || 'Standard');
@@ -13,6 +19,12 @@ export const AppProvider = ({ children }) => {
     const [cursorPosition, setCursorPosition] = useState(1);
     const [isResultDisplayed, setIsResultDisplayed] = useState(false);
     const [memoryLog, setMemoryLog] = useState(() => JSON.parse(localStorage.getItem('calc-memory-log') || '[]'));
+    const [settings, setSettings] = useState(() => JSON.parse((localStorage.getItem('calc-settings')) || JSON.stringify(DEFAULT_SETTINGS)));
+    
+    // Automatically Save to LocalStorage whenever settings change
+    useEffect(() => {
+        localStorage.setItem('calc-settings', JSON.stringify(settings));
+    }, [settings]);
 
     // Get saved history from local storage
     const [history, setHistory] = useState(() => {
@@ -101,7 +113,8 @@ export const AppProvider = ({ children }) => {
         cursorPosition, setCursorPosition,
         isResultDisplayed, setIsResultDisplayed,
         history, setHistory, addHistoryEntry,
-        memory
+        memory,
+        settings, setSettings
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,6 +1,6 @@
 export const prepareExpressionForEvaluation = (expression, lastAns) => {
-    let expr = expression;
-
+    let expr = expression.replace(/,/g, '');
+    
     expr = expr.replace(/(π|×|÷)/g, (match) => {
         if (match === 'π') return Math.PI.toString();
         if (match === '×') return '*';
