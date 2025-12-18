@@ -51,18 +51,19 @@ function Calculator() {
     console.log('Voice Command Received in Calculator:', command);
     if (!command) return;
 
+    // Detect if mobile FIRST
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log('Is Mobile:', isMobile); // Debug log
+
     while (isProcessingVoice.current) {
       await delay(50);
     }
     isProcessingVoice.current = true;
 
     try {
-        // Detect if mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
         // Handle array of commands
         const commands = Array.isArray(command) ? command : [command];
-
+        
         for (const cmd of commands) {
             if (cmd.type !== 'insert_text') {
                 if (cmd.type === 'left' || cmd.type === 'right') {
@@ -76,10 +77,12 @@ function Calculator() {
             }
             else if (cmd.type === 'insert_text' && cmd.value) {
                 if (isMobile) {
-                    // Mobile: Insert all at once (no typing effect)
+                    // Mobile: Insert all at once (no typing effect, no delay)
+                    console.log('Mobile mode - inserting:', cmd.value);
                     handleAction('insert_text', cmd.value);
                 } else {
                     // PC: Character-by-character with typing effect
+                    console.log('PC mode - typing:', cmd.value);
                     const characters = cmd.value.split('');
                     for (const char of characters) {
                         handleAction('insert_text', char);
