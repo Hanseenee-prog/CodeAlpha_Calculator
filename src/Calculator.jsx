@@ -12,7 +12,7 @@ import { useAppContext } from './components/Contexts/AppContext';
 function Calculator() {
   const [ buttons, setButtons ] = useState(() => {
     const savedMode = localStorage.getItem('calculatorMode');
-    
+
     switch (savedMode) {
       case 'Scientific': return scientificButtons;
       case 'Programmer': return programmerButtons;
@@ -29,7 +29,7 @@ function Calculator() {
   useEffect(() => {
     const savedMode = localStorage.getItem('calculatorMode');
     if (savedMode) handleModeChange(savedMode);
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,10 +59,10 @@ function Calculator() {
     try {
         // Detect if mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
+
         // Handle array of commands
         const commands = Array.isArray(command) ? command : [command];
-        
+
         for (const cmd of commands) {
             if (cmd.type !== 'insert_text') {
                 if (cmd.type === 'left' || cmd.type === 'right') {
@@ -112,7 +112,7 @@ function Calculator() {
       rounded-3xl border border-gray-200 dark:border-slate-700
       overflow-hidden'
     >
-                      
+
       <div className="h-full flex items-stretch flex-col w-full relative overflow-hidden bg-transparent"
         onClick={handleBodyClick}
       >
@@ -134,7 +134,7 @@ function Calculator() {
           cursorPosition={cursorPosition}
           onTranscript={handleVoiceCommand}
         />
-        
+
         <KeyPadGrid 
           buttons={buttons}
           onButtonClick={onButtonClick}
