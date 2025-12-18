@@ -6,7 +6,7 @@ const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
-    const [mode, setMode] = useState('Standard');
+    const [mode, setMode] = useState(() => localStorage.getItem('calculatorMode') || 'Standard');
     const [angleMode, setAngleMode] = useState(() => localStorage.getItem('angle-mode') || 'degrees');
     const [isOpen, setIsOpen] = useState(false);
     const [expression, setExpression] = useState('0');

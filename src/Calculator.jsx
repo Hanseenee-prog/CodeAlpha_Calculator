@@ -1,5 +1,5 @@
 import './App.css'
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Header from './components/Header';
 import SideBar from './components/Sidebar/SideBar';
 import CalcDisplay from './components/CalcDisplay';
@@ -10,15 +10,34 @@ import delay from './utils/helpers/delay';
 import { useAppContext } from './components/Contexts/AppContext';
 
 function Calculator() {
-  const [ buttons, setButtons ] = useState(standardButtons);
+  const [ buttons, setButtons ] = useState(() => {
+    const savedMode = localStorage.getItem('calculatorMode');
+    
+    switch (savedMode) {
+      case 'Scientific': return scientificButtons;
+      case 'Programmer': return programmerButtons;
+      default: return standardButtons;
+    }
+  });
+
   const { expression, result, onButtonClick, clear, cursorPosition, handleAction, moveCursor } = useCalcLogic();
   const { setMode, isOpen, setIsOpen } = useAppContext();
   const isProcessingVoice = useRef(false);
   const sideBarRef = useRef(null);
 
+  // Load mode from localStorage
+  useEffect(() => {
+    const savedMode = localStorage.getItem('calculatorMode');
+    if (savedMode) handleModeChange(savedMode);
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Handle mode change - like scientific, standard, etc
   const handleModeChange = (newMode) => {
     setMode(newMode);
+    localStorage.setItem('calculatorMode', newMode);
+
     switch (newMode) {
       case 'Standard': setButtons(standardButtons); break;
       case 'Scientific': setButtons(scientificButtons); break;

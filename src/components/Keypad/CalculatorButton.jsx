@@ -5,10 +5,9 @@ const CalculatorButton = React.memo(({ button, onButtonClick, isAccent, isMemory
     const { memory, mode } = useAppContext();
     const { isMemoryActive } = memory;
     
-    // Updated baseStyle: 'h-full' ensures the button stretches to fit the grid cell on PC
     const baseStyle = `
         w-full h-full flex items-center justify-center 
-        font-semibold cursor-pointer shadow-sm transition-all duration-200
+        font-semibold cursor-pointer shadow-sm
         active:scale-95 select-none
     `;
 

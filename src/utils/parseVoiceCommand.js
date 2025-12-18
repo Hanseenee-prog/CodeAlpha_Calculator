@@ -1,26 +1,57 @@
 export const parseVoiceCommand = (text) => {
-    let command = text.toLowerCase().trim();
+    let commandText = text.toLowerCase().trim();
 
-    // Split by action words first
-    const parts = command.split(/\b(equals?|equal to|calculate|clear|delete|backspace|negate|plus minus|reciprocal|1 over x|inverse of|move left|move right|left|right)\b/)
-    
+    // 1. Regex to split the sentence by command keywords
+    const actionRegex = /\b(equals?|equal to|calculate|result|is|clear|clean|delete|backspace|negate|plus minus|reciprocal|1 over x|inverse of|move left|move right|left|right|memory store|store|memory recall|recall|memory plus|memory add|memory clear|memory minus|absolute|absolute value|factorial|random|rand|sine|sin|cosine|cos|tangent|tan|logarithm|log|natural log|ln|pi|squared|cubed|power of|to the power|open bracket|parenthesis|close bracket|close parenthesis)\b/;
+
+    const parts = commandText.split(actionRegex);
     const commands = [];
 
     for (let part of parts) {
-        part = part.trim();
         if (!part) continue;
+        part = part.trim();
 
-        // Check if it's an action command
-        if (part === 'equals' || part === 'equal' || part === 'calculate') commands.push({ type: 'calculate' });
-        else if (part === 'clear' || part === 'clean') commands.push({ type: 'clear' });
-        else if (part === 'delete' || part === 'backspace') commands.push({ type: 'delete' });
-        else if (part === 'negate' || part === 'plus minus') commands.push({ type: 'negate' });
-        else if (part === 'reciprocal' || part === '1 over x' || part === 'inverse of x') commands.push({ type: 'reciprocal' });
-        else if (part === 'move left' || part === 'left') commands.push({ type: 'left' });
-        else if (part === 'move right' || part === 'right') commands.push({ type: 'right' });
+        // Basic Action Commands
+        if (['equals', 'equal', 'calculate', 'result', 'is'].includes(part)) commands.push({ type: 'calculate' });
+        else if (['clear', 'clean'].includes(part)) commands.push({ type: 'clear' });
+        else if (['delete', 'backspace'].includes(part)) commands.push({ type: 'delete' });
+        else if (['negate', 'plus minus'].includes(part)) commands.push({ type: 'negate' });
+        else if (['reciprocal', '1 over x', 'inverse of'].includes(part)) commands.push({ type: 'reciprocal' });
+        else if (['move left', 'left'].includes(part)) commands.push({ type: 'left' });
+        else if (['move right', 'right'].includes(part)) commands.push({ type: 'right' });
+        
+        // Memory Commands
+        else if (['memory store', 'store'].includes(part)) commands.push({ type: 'memory-store' });
+        else if (['memory recall', 'recall'].includes(part)) commands.push({ type: 'memory-recall' });
+        else if (['memory plus', 'memory add'].includes(part)) commands.push({ type: 'memory-add' });
+        else if (['memory minus'].includes(part)) commands.push({ type: 'memory-subtract' });
+        else if (['memory clear'].includes(part)) commands.push({ type: 'memory-clear' });
+        
+        // Scientific Function Commands (Explicit Push)
+        else if (['absolute', 'absolute value'].includes(part)) commands.push({ type: 'insert_text', value: 'abs(' });
+        else if (['factorial'].includes(part)) commands.push({ type: 'insert_text', value: '!' });
+        else if (['random', 'rand'].includes(part)) commands.push({ type: 'insert_text', value: 'Rand' });
+        else if (['sine', 'sin'].includes(part)) commands.push({ type: 'insert_text', value: 'sin(' });
+        else if (['cosine', 'cos'].includes(part)) commands.push({ type: 'insert_text', value: 'cos(' });
+        else if (['tangent', 'tan'].includes(part)) commands.push({ type: 'insert_text', value: 'tan(' });
+        else if (['logarithm', 'log'].includes(part)) commands.push({ type: 'insert_text', value: 'log(' });
+        else if (['natural log', 'ln'].includes(part)) commands.push({ type: 'insert_text', value: 'ln(' });
+        else if (['exponential', 'exp'].includes(part)) commands.push({ type: 'insert_text', value: 'exp(' });
+        else if (['ten raised to the power'].includes(part)) commands.push({ type: 'insert_text', value: '10^(' });
+        else if (['pi', 'pie', 'by', 'buy', 'p'].includes(part)) commands.push({ type: 'insert_text', value: 'π' });
+        else if (['squared', 'raised to the power of 2'].includes(part)) commands.push({ type: 'insert_text', value: '²' });
+        else if (['cubed', 'raised to the power of 3'].includes(part)) commands.push({ type: 'insert_text', value: '³' });
+        else if (['square root', 'root', 'square roots', 'roots'].includes(part)) commands.push({ type: 'insert_text', value: '√' });
+        else if (['cube root', 'raised to the power of 1/3', 'third'].includes(part)) commands.push({ type: 'insert_text', value: '∛' });
+        else if (['nth root', 'y root', 'n root', 'radical', 'n'].includes(part)) commands.push({ type: 'insert_text', value: 'ʸ√(' });
+        else if (['power of', 'to the power'].includes(part)) commands.push({ type: 'insert_text', value: '^' });
+        else if (['open bracket', 'parenthesis'].includes(part)) commands.push({ type: 'insert_text', value: '(' });
+        else if (['close bracket', 'close parenthesis'].includes(part)) commands.push({ type: 'insert_text', value: ')' });
+        else if (['permutation'].includes(part)) commands.push({ type: 'insert_text', value: 'P' });
+        else if (['combination'].includes(part)) commands.push({ type: 'insert_text', value: 'C' });
 
         else {
-            // It's a number/expression - clean and convert
+            // This block handles Numbers and Basic Operators only
             let cleanedPart = part;
 
             const numberWords = {
@@ -29,34 +60,33 @@ export const parseVoiceCommand = (text) => {
             };
 
             Object.keys(numberWords).forEach(word => {
-                // Use a global regular expression to replace ALL instances of the word
-                // The \b ensures we only match whole words (e.g., prevents changing "lone" to "l1")
                 const regex = new RegExp(`\\b${word}\\b`, 'g');
-                command = command.replace(regex, numberWords[word]);
-            });            
+                cleanedPart = cleanedPart.replace(regex, numberWords[word]);
+            });
 
-            // Replace Operators
-            cleanedPart = cleanedPart.replace(/times|multiply/g, '*');
-            cleanedPart = cleanedPart.replace(/divide|divided by/g, '/');
+            // Operator Replacements
+            cleanedPart = cleanedPart.replace(/times|multiply|multiplied by/g, '×');
+            cleanedPart = cleanedPart.replace(/divide|divided by/g, '÷');
             cleanedPart = cleanedPart.replace(/add|plus/g, '+');
             cleanedPart = cleanedPart.replace(/minus|subtract/g, '-');
-            cleanedPart = cleanedPart.replace(/x/gi, '*');
-            cleanedPart = cleanedPart.replace(/square root|root/g, '√');
-            cleanedPart = cleanedPart.replace(/answer/, 'Ans');  
-            cleanedPart = cleanedPart.replace(/point/g, '.'); 
-            cleanedPart = cleanedPart.replace(/percent/g, '%'); 
+            cleanedPart = cleanedPart.replace(/\bx\b/gi, '×');
+            cleanedPart = cleanedPart.replace(/square roots?|root/g, '√');
+            cleanedPart = cleanedPart.replace(/point|dot/g, '.');
+            cleanedPart = cleanedPart.replace(/percent/g, '%');
+            cleanedPart = cleanedPart.replace(/answer/g, 'Ans');
 
-            // Remove spaces and punctuation marks
-            cleanedPart = cleanedPart.replace(/[,!?;]/g, ''); 
+            // Cleanup symbols
+            cleanedPart = cleanedPart.replace(/[,!?;]/g, '');
             cleanedPart = cleanedPart.replace(/\s+/g, '');
-            
-            // If valid expression, add it
-            if (/^[\d+\-*/%.√()Ans]+$/.test(cleanedPart)) {
-                commands.push({ type: 'insert_text', value: cleanedPart })
+
+            // STRICT VALIDATION: Only numbers and basic operators allowed here
+            if (/^[\d+\-÷×%.√Ans]+$/.test(cleanedPart)) {
+                commands.push({ type: 'insert_text', value: cleanedPart });
             }
         }
-
-        // Return array of comments or single command
-        return commands.length === 1 ? commands[0] : commands.length > 1 ? commands : null;
     }
-}
+
+    // Outside the for loop to prevent duplication bugs
+    if (commands.length === 0) return null;
+    return commands.length === 1 ? commands[0] : commands;
+};
