@@ -4,6 +4,8 @@ import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
     const [isListening, setIsListening] = useState(false);
+    const accumulatedTranscript = useRef(''); // Store accumulated text
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -12,7 +14,7 @@ const SoundRecorder = ({ onTranscript }) => {
             console.log('Your browser doesn\'t support speech recognition');
             return;
         }
-    
+
         const recognition = new SpeechRecognition();
         recognition.lang = 'en-US';
         recognition.continuous = true;
@@ -22,24 +24,51 @@ const SoundRecorder = ({ onTranscript }) => {
 
         recognition.onstart = () => {
             console.log('Voice recognition started.');
+            accumulatedTranscript.current = ''; // Reset accumulator
         }
 
         recognition.onend = () => {
+            console.log('Voice recognition ended.');
             setIsListening(false);
+            
+            // Send accumulated transcript when recognition ends (for mobile)
+            if (isMobile && accumulatedTranscript.current.trim()) {
+                console.log('Sending accumulated transcript:', accumulatedTranscript.current);
+                const command = parseVoiceCommand(accumulatedTranscript.current);
+                if (command && onTranscript) {
+                    onTranscript(command);
+                }
+                accumulatedTranscript.current = ''; // Clear after sending
+            }
         }
 
         recognition.onresult = (e) => {
-            const lastResultIndex = e.results.length - 1;
-            const result = e.results[lastResultIndex];
-            
-            if (result.isFinal) {
-                const text = result[0].transcript;
-                const command = parseVoiceCommand(text);
-                if (command && onTranscript) onTranscript(command);
+            if (isMobile) {
+                // Mobile: Accumulate all final results
+                let fullText = '';
+                for (let i = 0; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        fullText += e.results[i][0].transcript + ' ';
+                    }
+                }
+                accumulatedTranscript.current = fullText.trim();
+                console.log('Accumulated so far:', accumulatedTranscript.current);
+            } else {
+                // PC: Process immediately (original behavior)
+                const lastResultIndex = e.results.length - 1;
+                const result = e.results[lastResultIndex];
+
+                if (result.isFinal) {
+                    const text = result[0].transcript;
+                    console.log('Processing immediately (PC):', text);
+                    const command = parseVoiceCommand(text);
+                    if (command && onTranscript) onTranscript(command);
+                }
             }
         }
 
         recognition.onerror = (e) => {
+            console.error('Recognition error:', e.error);
             if (e.error === 'network' && isListening) {
                 setTimeout(() => {
                     try { recognition.start(); } catch { /* Already running */ }
@@ -50,12 +79,13 @@ const SoundRecorder = ({ onTranscript }) => {
         return () => {
             if (recognitionRef.current) recognitionRef.current.stop();
         }
-    }, [onTranscript, isListening])
+    }, [onTranscript, isListening, isMobile])
 
     const startVoiceRecorder = () => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
         try {
+            accumulatedTranscript.current = ''; // Clear before starting
             recognition.start();
             setIsListening(true);
         } catch (e) { console.log(e); }
@@ -64,7 +94,7 @@ const SoundRecorder = ({ onTranscript }) => {
     const endVoiceRecorder = () => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
-        recognition.stop();
+        recognition.stop(); // This will trigger onend which sends the accumulated text
         setIsListening(false);
     }
 
@@ -107,5 +137,5 @@ const SoundRecorder = ({ onTranscript }) => {
         </button>
     );
 }
- 
+
 export default SoundRecorder;
