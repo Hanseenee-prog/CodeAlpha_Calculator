@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { parseVoiceCommand } from "../utils/parseVoiceCommand";
+import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
