@@ -4,6 +4,7 @@ import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
     const [isListening, setIsListening] = useState(false);
+    const processedResultsRef = useRef(0);
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -22,20 +23,27 @@ const SoundRecorder = ({ onTranscript }) => {
 
         recognition.onstart = () => {
             console.log('Voice recognition started.');
+            processedResultsRef.current = 0;
         }
 
         recognition.onend = () => {
             setIsListening(false);
+            processedResultsRef.current = 0;
+            console.log('Voice recognition ended.');
         }
 
         recognition.onresult = (e) => {
-            const lastResultIndex = e.results.length - 1;
-            const result = e.results[lastResultIndex];
-            
-            if (result.isFinal) {
-                const text = result[0].transcript;
-                const command = parseVoiceCommand(text);
-                if (command && onTranscript) onTranscript(command);
+            for (let i = processedResultsRef.current; i < e.results.length - 1; i++) {
+                const result = e.results[i];
+
+                if (result.isFinal) {
+                    const text = result[0].transcript;
+                    const command = parseVoiceCommand(text);
+                    if (command && onTranscript) onTranscript(command);
+                }
+            // const lastResultIndex = e.results.length - 1;
+            // const result = e.results[lastResultIndex];
+            processedResultsRef.current = i + 1;
             }
         }
 
@@ -56,6 +64,7 @@ const SoundRecorder = ({ onTranscript }) => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
         try {
+            processedResultsRef.current = 0;
             recognition.start();
             setIsListening(true);
         } catch (e) { console.log(e); }

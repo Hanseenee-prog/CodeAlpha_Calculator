@@ -39,7 +39,7 @@ const LocalMemory = () => {
                         })}
                     </div>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center p-2 text-gray-400 dark:text-slate-500 italic">
+                    <div className="flex-1 flex items-center justify-center p-2 text-gray-500 dark:text-slate-500 italic">
                         <span>Nothing in memory for now....</span>
                     </div>
                 )}
