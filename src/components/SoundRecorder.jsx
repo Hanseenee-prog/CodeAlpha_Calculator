@@ -4,7 +4,7 @@ import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
     const [isListening, setIsListening] = useState(false);
-    const processedResultsRef = useRef(0);
+    const lastProcessedTranscript = useRef(''); // Track what we last processed
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -13,7 +13,7 @@ const SoundRecorder = ({ onTranscript }) => {
             console.log('Your browser doesn\'t support speech recognition');
             return;
         }
-    
+
         const recognition = new SpeechRecognition();
         recognition.lang = 'en-US';
         recognition.continuous = true;
@@ -23,27 +23,30 @@ const SoundRecorder = ({ onTranscript }) => {
 
         recognition.onstart = () => {
             console.log('Voice recognition started.');
-            processedResultsRef.current = 0;
+            lastProcessedTranscript.current = ''; // Reset on start
         }
 
         recognition.onend = () => {
             setIsListening(false);
-            processedResultsRef.current = 0;
-            console.log('Voice recognition ended.');
+            lastProcessedTranscript.current = ''; // Reset on end
         }
 
         recognition.onresult = (e) => {
-            for (let i = processedResultsRef.current; i < e.results.length - 1; i++) {
-                const result = e.results[i];
-
-                if (result.isFinal) {
-                    const text = result[0].transcript;
-                    const command = parseVoiceCommand(text);
-                    if (command && onTranscript) onTranscript(command);
+            // Get the COMPLETE transcript from all results
+            let fullTranscript = '';
+            for (let i = 0; i < e.results.length; i++) {
+                if (e.results[i].isFinal) {
+                    fullTranscript += e.results[i][0].transcript;
                 }
-            // const lastResultIndex = e.results.length - 1;
-            // const result = e.results[lastResultIndex];
-            processedResultsRef.current = i + 1;
+            }
+
+            // Only process if we have a new transcript that's different from last time
+            if (fullTranscript && fullTranscript !== lastProcessedTranscript.current) {
+                const command = parseVoiceCommand(fullTranscript);
+                if (command && onTranscript) {
+                    onTranscript(command);
+                }
+                lastProcessedTranscript.current = fullTranscript;
             }
         }
 
@@ -64,7 +67,7 @@ const SoundRecorder = ({ onTranscript }) => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
         try {
-            processedResultsRef.current = 0;
+            lastProcessedTranscript.current = ''; // Reset on manual start
             recognition.start();
             setIsListening(true);
         } catch (e) { console.log(e); }
@@ -116,5 +119,5 @@ const SoundRecorder = ({ onTranscript }) => {
         </button>
     );
 }
- 
+
 export default SoundRecorder;
