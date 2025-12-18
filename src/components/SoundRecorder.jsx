@@ -4,7 +4,7 @@ import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
     const [isListening, setIsListening] = useState(false);
-    const lastProcessedTranscript = useRef(''); // Track what we last processed
+    const processedTranscripts = useRef(new Set()); // Track all processed transcripts
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -23,30 +23,33 @@ const SoundRecorder = ({ onTranscript }) => {
 
         recognition.onstart = () => {
             console.log('Voice recognition started.');
-            lastProcessedTranscript.current = ''; // Reset on start
+            processedTranscripts.current.clear(); // Clear on start
         }
 
         recognition.onend = () => {
             setIsListening(false);
-            lastProcessedTranscript.current = ''; // Reset on end
+            processedTranscripts.current.clear(); // Clear on end
         }
 
         recognition.onresult = (e) => {
-            // Get the COMPLETE transcript from all results
-            let fullTranscript = '';
-            for (let i = 0; i < e.results.length; i++) {
-                if (e.results[i].isFinal) {
-                    fullTranscript += e.results[i][0].transcript;
-                }
-            }
+            const lastResultIndex = e.results.length - 1;
+            const result = e.results[lastResultIndex];
 
-            // Only process if we have a new transcript that's different from last time
-            if (fullTranscript && fullTranscript !== lastProcessedTranscript.current) {
-                const command = parseVoiceCommand(fullTranscript);
-                if (command && onTranscript) {
-                    onTranscript(command);
+            if (result.isFinal) {
+                const text = result[0].transcript.trim();
+                
+                console.log('Final transcript:', text);
+                
+                // Check if we've already processed this exact transcript
+                if (!processedTranscripts.current.has(text)) {
+                    processedTranscripts.current.add(text);
+                    const command = parseVoiceCommand(text);
+                    if (command && onTranscript) {
+                        onTranscript(command);
+                    }
+                } else {
+                    console.log('Skipping duplicate transcript:', text);
                 }
-                lastProcessedTranscript.current = fullTranscript;
             }
         }
 
@@ -67,7 +70,7 @@ const SoundRecorder = ({ onTranscript }) => {
         const recognition = recognitionRef.current;
         if (!recognition) return;
         try {
-            lastProcessedTranscript.current = ''; // Reset on manual start
+            processedTranscripts.current.clear(); // Clear on manual start
             recognition.start();
             setIsListening(true);
         } catch (e) { console.log(e); }
