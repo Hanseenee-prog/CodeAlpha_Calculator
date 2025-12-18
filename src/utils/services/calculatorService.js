@@ -5,10 +5,6 @@ import { handleReciprocal } from './actionHandlers/handleRecipocal';
 import { handleNegate } from './actionHandlers/handleNegate';
 import { handleCalculate } from './actionHandlers/handleCalculate';
 
-/**
- * Service to orchestrate calculator actions and apply live formatting.
- * Updated for 2025 SmartCalcX features.
- */
 export const handleCalculationAction = (actionType, expression, isResultDisplayed, lastAns, cursorPosition, resultValue, angleMode, value, settings) => {
     // Initial state object
     let result = {
@@ -22,7 +18,7 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
 
     let updates;
 
-    // 1. Determine the raw mathematical update based on actionType
+    // Determine the raw mathematical update based on actionType
     switch (actionType) {
         case 'insert_text':
             updates = insertAtCursor(expression, cursorPosition, value, isResultDisplayed);
@@ -59,11 +55,9 @@ export const handleCalculationAction = (actionType, expression, isResultDisplaye
     }
 
     // Apply LIVE thousands separators if the action modified the expression text
-    // This logic ensures the display stays pretty while the user types
     if (updates && (actionType === 'insert_text' || actionType === 'delete' || actionType === 'negate' || actionType === 'reciprocal')) {
         const rawExpr = updates.newExpr;
         
-        // Format the entire expression string based on user settings
         const formattedExpr = formatExpressionLive(rawExpr, settings);
 
         // CURSOR SHIFT LOGIC:

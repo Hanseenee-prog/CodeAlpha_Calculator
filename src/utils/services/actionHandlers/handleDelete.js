@@ -13,11 +13,17 @@ export const handleDelete = (expression, cursorPosition, result) => {
 
         // Handle final '0' and cursor position
         if (newExpr === '') {
-            result.newExpr = '0';
-            result.newCursorPos = 1;
+            return {
+                ...result,
+                newExpr: '0',
+                newCursorPos: 1,
+            }
         } else {
-            result.newExpr = newExpr;
-            result.newCursorPos = newCursorPos;
+            return {
+                ...result,
+                newExpr: newExpr,
+                newCursorPos: newCursorPos,
+            }
         }
     }
     return result; 

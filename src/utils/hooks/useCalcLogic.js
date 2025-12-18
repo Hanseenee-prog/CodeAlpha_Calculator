@@ -132,15 +132,14 @@ export const useCalcLogic = () => {
                     cursorPosition: updates.newCursorPos,
                     lastAns: updates.lastAns,
                     isResultDisplayed: updates.isResultDisplayed,
-                    resultValue: updates.resultValue,
-                    cursorMode: updates.cursorMode
+                    result: updates.resultValue,
                 }
 
                 // Update other states
                 setExpression(stateRef.current.expression);
                 setCursorPosition(stateRef.current.cursorPosition);
                 setLastAns(stateRef.current.lastAns);
-                setResult(stateRef.current.resultValue);
+                setResult(stateRef.current.result);
                 setIsResultDisplayed(stateRef.current.isResultDisplayed);
                 localStorage.setItem('lastAns', stateRef.current.lastAns);
 
