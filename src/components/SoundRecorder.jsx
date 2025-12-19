@@ -3,8 +3,7 @@ import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
-    const accumulatedTranscript = useRef("");
-    const lastFinalIndexRef = useRef(-1); // 🔥 KEY FIX
+    const accumulatedTranscript = useRef(""); // accumulate raw text
     const [isListening, setIsListening] = useState(false);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -30,37 +29,24 @@ const SoundRecorder = ({ onTranscript }) => {
         recognition.onstart = () => {
             console.log("🎤 Listening started");
             accumulatedTranscript.current = "";
-            lastFinalIndexRef.current = -1; // reset
         };
 
         recognition.onresult = (e) => {
             if (isMobile) {
-                // ✅ ANDROID: process ONLY NEW final results
-                for (let i = 0; i < e.results.length; i++) {
-                    if (
-                        e.results[i].isFinal &&
-                        i > lastFinalIndexRef.current
-                    ) {
-                        accumulatedTranscript.current +=
-                            e.results[i][0].transcript + " ";
-
-                        lastFinalIndexRef.current = i; // 🔒 lock it
+                // ✅ Android: accumulate ALL partials
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        accumulatedTranscript.current += e.results[i][0].transcript + " ";
                     }
                 }
-
-                console.log(
-                    "📱 Android accumulated:",
-                    accumulatedTranscript.current.trim()
-                );
+                console.log("📱 Android accumulating:", accumulatedTranscript.current.trim());
             } else {
-                // ✅ PC: immediate final processing
+                // PC: immediate parsing
                 const lastIndex = e.results.length - 1;
                 const result = e.results[lastIndex];
 
                 if (result.isFinal) {
                     const text = result[0].transcript;
-                    console.log("🖥 PC:", text);
-
                     const command = parseVoiceCommand(text);
                     if (command && onTranscript) onTranscript(command);
                 }
@@ -68,19 +54,15 @@ const SoundRecorder = ({ onTranscript }) => {
         };
 
         recognition.onend = () => {
-            console.log("🛑 Listening ended");
             setIsListening(false);
 
-            // ✅ Android: send ONCE
+            // ✅ Mobile: call parseVoiceCommand ONCE
             if (isMobile && accumulatedTranscript.current.trim()) {
-                const command = parseVoiceCommand(
-                    accumulatedTranscript.current.trim()
-                );
-                if (command && onTranscript) {
-                    onTranscript(command);
-                }
-
+                const finalText = accumulatedTranscript.current.trim();
                 accumulatedTranscript.current = "";
+
+                const command = parseVoiceCommand(finalText);
+                if (command && onTranscript) onTranscript(command);
             }
         };
 
@@ -93,10 +75,7 @@ const SoundRecorder = ({ onTranscript }) => {
 
     const startVoiceRecorder = () => {
         if (!recognitionRef.current || isListening) return;
-
         accumulatedTranscript.current = "";
-        lastFinalIndexRef.current = -1;
-
         try {
             recognitionRef.current.start();
             setIsListening(true);
@@ -117,12 +96,10 @@ const SoundRecorder = ({ onTranscript }) => {
                 className={`
                     cursor-pointer h-full rounded-xl w-9
                     flex items-center justify-center transition-all duration-300
-                    ${
-                        isListening
-                            ? "bg-red-600 dark:bg-red-700 text-white animate-pulse"
-                            : "bg-blue-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
-                    }
-                `}
+                    ${isListening
+                        ? "bg-red-600 dark:bg-red-700 text-white animate-pulse"
+                        : "bg-blue-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
+                    }`}
             >
                 🎤
             </span>
