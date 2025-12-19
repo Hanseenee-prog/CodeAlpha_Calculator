@@ -35,11 +35,10 @@ const Modes = ({ onModeChange, setDropdownOpenId }) => {
                                     onModeChange(modeOption)
                                 }}
                             >
-                                {/* If mode is Converter, add dropdown arrow */}
-                                {modeOption !== 'Converter' ? modeOption : (
-                                    <span className="w-full flex justify-between items-center">
+                                {(modeOption !== 'Converter' && modeOption !== 'Programmer') ? modeOption : (
+                                    <span className="w-full flex flex-row justify-between items-center">
                                         {modeOption}
-                                        <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                        <span className="text-[12px] text-blue-500 dark:text-blue-300">[Coming soon..]</span>
                                     </span>
                                 )}
                             </li>                        

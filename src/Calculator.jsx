@@ -4,7 +4,7 @@ import Header from './components/Header';
 import SideBar from './components/Sidebar/SideBar';
 import CalcDisplay from './components/CalcDisplay';
 import KeyPadGrid from './components/Keypad/KeyPadGrid';
-import { standardButtons, scientificButtons, programmerButtons } from './data/buttons';
+import { standardButtons, scientificButtons } from './data/buttons';
 import { useCalcLogic } from './utils/hooks/useCalcLogic';
 import delay from './utils/helpers/delay';
 import { useAppContext } from './components/Contexts/AppContext';
@@ -15,7 +15,7 @@ function Calculator() {
 
     switch (savedMode) {
       case 'Scientific': return scientificButtons;
-      case 'Programmer': return programmerButtons;
+      // case 'Programmer': return programmerButtons;
       default: return standardButtons;
     }
   });
@@ -38,7 +38,7 @@ function Calculator() {
     switch (newMode) {
       case 'Standard': setButtons(standardButtons); break;
       case 'Scientific': setButtons(scientificButtons); break;
-      case 'Programmer': setButtons(programmerButtons); break;
+      // case 'Programmer': setButtons(programmerButtons); break;
       default: setButtons(standardButtons);
     }
     clear();
