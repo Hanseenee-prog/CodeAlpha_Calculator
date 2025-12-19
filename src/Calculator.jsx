@@ -25,15 +25,12 @@ function Calculator() {
   const isProcessingVoice = useRef(false);
   const sideBarRef = useRef(null);
 
-  // Load mode from localStorage
   useEffect(() => {
     const savedMode = localStorage.getItem('calculatorMode');
     if (savedMode) handleModeChange(savedMode);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle mode change - like scientific, standard, etc
   const handleModeChange = (newMode) => {
     setMode(newMode);
     localStorage.setItem('calculatorMode', newMode);
@@ -51,58 +48,42 @@ function Calculator() {
     console.log('Voice Command Received in Calculator:', command);
     if (!command) return;
 
-    // Detect if mobile FIRST
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    console.log('Is Mobile:', isMobile); // Debug log
-
     while (isProcessingVoice.current) {
       await delay(50);
     }
     isProcessingVoice.current = true;
 
     try {
-        // Handle array of commands
-        const commands = Array.isArray(command) ? command : [command];
-        
-        for (const cmd of commands) {
-            if (cmd.type !== 'insert_text') {
-                if (cmd.type === 'left' || cmd.type === 'right') {
-                    moveCursor(cmd.type);
-                }
-                else if (cmd.type === 'calculate') {
-                    await delay(200);
-                    handleAction('calculate');
-                }
-                else handleAction(cmd.type); 
-            }
-            else if (cmd.type === 'insert_text' && cmd.value) {
-                if (isMobile) {
-                    // Mobile: Insert all at once (no typing effect, no delay)
-                    console.log('Mobile mode - inserting:', cmd.value);
-                    handleAction('insert_text', cmd.value);
-                } else {
-                    // PC: Character-by-character with typing effect
-                    console.log('PC mode - typing:', cmd.value);
-                    const characters = cmd.value.split('');
-                    for (const char of characters) {
-                        handleAction('insert_text', char);
-                        await delay(100);
-                    }
-                }
-            }
+      const commands = Array.isArray(command) ? command : [command];
+      
+      for (const cmd of commands) {
+        if (cmd.type !== 'insert_text') {
+          if (cmd.type === 'left' || cmd.type === 'right') {
+            moveCursor(cmd.type);
+          } else if (cmd.type === 'calculate') {
+            await delay(200);
+            handleAction('calculate');
+          } else {
+            handleAction(cmd.type); 
+          }
+        } else if (cmd.type === 'insert_text' && cmd.value) {
+          // Typing effect for all devices
+          const characters = cmd.value.split('');
+          for (const char of characters) {
+            handleAction('insert_text', char);
+            await delay(100);
+          }
         }
-    } 
-    finally {
+      }
+    } finally {
       isProcessingVoice.current = false;
     }
-}, [moveCursor, handleAction]);
+  }, [moveCursor, handleAction]);
 
   const handleBodyClick = (e) => {
     if (!isOpen) return;
-
     if (sideBarRef.current?.contains(e.target)) return;
     setIsOpen(false);
-    console.log('Body clicked')
   }
 
   return (
