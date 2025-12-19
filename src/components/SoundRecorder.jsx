@@ -4,6 +4,7 @@ import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
     const accumulatedTranscript = useRef("");
+    const lastFinalIndexRef = useRef(-1); // 🔥 KEY FIX
     const [isListening, setIsListening] = useState(false);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -21,38 +22,44 @@ const SoundRecorder = ({ onTranscript }) => {
 
         const recognition = new SpeechRecognition();
         recognition.lang = "en-US";
-        recognition.continuous = true;       // PC respects this
+        recognition.continuous = true;
         recognition.interimResults = true;
 
         recognitionRef.current = recognition;
 
         recognition.onstart = () => {
-            console.log("🎤 Voice recognition started");
+            console.log("🎤 Listening started");
             accumulatedTranscript.current = "";
+            lastFinalIndexRef.current = -1; // reset
         };
 
         recognition.onresult = (e) => {
             if (isMobile) {
-                // ✅ ANDROID: process ONLY new final results
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    if (e.results[i].isFinal) {
+                // ✅ ANDROID: process ONLY NEW final results
+                for (let i = 0; i < e.results.length; i++) {
+                    if (
+                        e.results[i].isFinal &&
+                        i > lastFinalIndexRef.current
+                    ) {
                         accumulatedTranscript.current +=
                             e.results[i][0].transcript + " ";
+
+                        lastFinalIndexRef.current = i; // 🔒 lock it
                     }
                 }
 
                 console.log(
-                    "📱 Accumulated (Android):",
+                    "📱 Android accumulated:",
                     accumulatedTranscript.current.trim()
                 );
             } else {
-                // ✅ PC: process immediately on final result
+                // ✅ PC: immediate final processing
                 const lastIndex = e.results.length - 1;
                 const result = e.results[lastIndex];
 
                 if (result.isFinal) {
                     const text = result[0].transcript;
-                    console.log("🖥 Processing (PC):", text);
+                    console.log("🖥 PC:", text);
 
                     const command = parseVoiceCommand(text);
                     if (command && onTranscript) onTranscript(command);
@@ -61,10 +68,10 @@ const SoundRecorder = ({ onTranscript }) => {
         };
 
         recognition.onend = () => {
-            console.log("🛑 Voice recognition ended");
+            console.log("🛑 Listening ended");
             setIsListening(false);
 
-            // ✅ Android sends ONCE when recognition ends
+            // ✅ Android: send ONCE
             if (isMobile && accumulatedTranscript.current.trim()) {
                 const command = parseVoiceCommand(
                     accumulatedTranscript.current.trim()
@@ -72,26 +79,26 @@ const SoundRecorder = ({ onTranscript }) => {
                 if (command && onTranscript) {
                     onTranscript(command);
                 }
+
                 accumulatedTranscript.current = "";
             }
         };
 
         recognition.onerror = (e) => {
-            console.error("Speech recognition error:", e.error);
+            console.error("Speech error:", e.error);
         };
 
-        return () => {
-            recognition.stop();
-        };
+        return () => recognition.stop();
     }, [onTranscript, isMobile]);
 
     const startVoiceRecorder = () => {
-        const recognition = recognitionRef.current;
-        if (!recognition || isListening) return;
+        if (!recognitionRef.current || isListening) return;
+
+        accumulatedTranscript.current = "";
+        lastFinalIndexRef.current = -1;
 
         try {
-            accumulatedTranscript.current = "";
-            recognition.start();
+            recognitionRef.current.start();
             setIsListening(true);
         } catch (e) {
             console.error(e);
@@ -99,10 +106,7 @@ const SoundRecorder = ({ onTranscript }) => {
     };
 
     const stopVoiceRecorder = () => {
-        const recognition = recognitionRef.current;
-        if (!recognition) return;
-
-        recognition.stop();
+        recognitionRef.current?.stop();
         setIsListening(false);
     };
 
@@ -115,36 +119,16 @@ const SoundRecorder = ({ onTranscript }) => {
                     flex items-center justify-center transition-all duration-300
                     ${
                         isListening
-                            ? "bg-red-600 dark:bg-red-700 text-white shadow-lg shadow-red-500/40 animate-pulse"
-                            : "bg-blue-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:scale-105"
+                            ? "bg-red-600 dark:bg-red-700 text-white animate-pulse"
+                            : "bg-blue-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
                     }
                 `}
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-4 h-4"
-                >
-                    <rect x="9" y="3" width="6" height="10" rx="3" />
-                    <path d="M19 11a7 7 0 0 1-14 0" />
-                    <path d="M12 21v-3" />
-                    <path d="M8 22h8" />
-                </svg>
+                🎤
             </span>
 
             {isListening && (
-                <span
-                    className="
-                        bg-red-600 dark:bg-red-700 text-white font-medium
-                        rounded-xl h-full text-[12px] px-3 flex items-center
-                        shadow-lg shadow-red-500/20 transition-all
-                    "
-                >
+                <span className="bg-red-600 text-white text-xs px-3 rounded-xl">
                     Listening...
                 </span>
             )}
