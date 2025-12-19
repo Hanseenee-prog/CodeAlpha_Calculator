@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { parseVoiceCommand } from "../utils/helpers/parseVoiceCommand";
+import { passVoiceCommand } from "../utils/helpers/passVoiceCommand"; // your new wrapper
 
 const SoundRecorder = ({ onTranscript }) => {
     const recognitionRef = useRef(null);
-    const accumulatedTranscript = useRef(""); // store raw mobile transcript
+    const accumulatedTranscript = useRef(""); // raw mobile transcript
     const [isListening, setIsListening] = useState(false);
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -43,7 +43,7 @@ const SoundRecorder = ({ onTranscript }) => {
                 const lastIndex = e.results.length - 1;
                 const result = e.results[lastIndex];
                 if (result.isFinal) {
-                    const command = parseVoiceCommand(result[0].transcript);
+                    const command = passVoiceCommand(result[0].transcript, "PC");
                     if (command && onTranscript) onTranscript(command);
                 }
             }
@@ -54,10 +54,8 @@ const SoundRecorder = ({ onTranscript }) => {
 
             if (isMobile && accumulatedTranscript.current.trim()) {
                 // ✅ Mobile: parse once when recognition ends
-                const command = parseVoiceCommand(accumulatedTranscript.current.trim());
-                if (command && onTranscript) {
-                    onTranscript(command); // replace, don't append
-                }
+                const command = passVoiceCommand(accumulatedTranscript.current.trim(), "Mobile");
+                if (command && onTranscript) onTranscript(command);
                 accumulatedTranscript.current = "";
             }
         };
@@ -86,7 +84,6 @@ const SoundRecorder = ({ onTranscript }) => {
     };
 
     return (
-        // ⚠️ Leave your button, SVG, and styling exactly as they are
         <button className="absolute bottom-1 left-3 h-9 flex flex-row items-center gap-2">
             <span
                 onClick={isListening ? stopVoiceRecorder : startVoiceRecorder}
