@@ -21,7 +21,6 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
                 h-40 w-full relative
                 flex flex-row items-stretch
                 bg-gray-50 dark:bg-slate-900/50
-                transition-colors duration-300
             ">
                 <div 
                     className="pl-3 pr-3 w-full flex flex-col justify-center"
@@ -30,22 +29,23 @@ const CalcDisplay = ({ expression, result, cursorPosition, onTranscript }) => {
                     {/* Span for calculations display */}
                     <span 
                         className="
-                            relative text-4xl flex flex-row
+                            relative flex flex-row
                             items-center justify-end truncate
                             text-slate-600 dark:text-slate-400
-                            mt-4
+                            mt-4 dynamic-expression
                         ">
                             {partBeforeCursor}
                         <span className="font-light text-3xl text-blue-500 dark:text-blue-400 animate-[cursor-blink_1s_steps(1)_infinite]">|</span>
-                            {partAfterCursor}
+                        {partAfterCursor}
                     </span>
 
                     {/* Span for results display */}
                     <span className="
                         w-full flex flex-row items-center justify-end
-                        text-5xl font-semibold mt-2
+                        font-semibold mt-2
                         text-slate-900 dark:text-white
                         dark:drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]
+                        dynamic-result
                     ">
                         {result}
                     </span>

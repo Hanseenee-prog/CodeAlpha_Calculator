@@ -8,3 +8,17 @@
 
     --animate-blink-cursor: cursor-blink 0.8s steps(1) infinite;
 }
+
+.dynamic-expression {
+  font-size: clamp(1rem, 5vw, 2.5rem); /* min 16px, max 40px, scales with viewport */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dynamic-result {
+  font-size: clamp(1.5rem, 6vw, 3rem); /* min 24px, max 48px, scales with viewport */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
